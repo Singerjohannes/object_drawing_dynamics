@@ -29,7 +29,7 @@ data/meg/temporal_generalization/
 With this folder structure all scripts can be executed without changes.  
 To reproduce the results for the MEG-data execute the script meg_decoding_group_wrapper.m  
 To reproduce the results for the fMRI-ROI-data execute the script fmri_group_roi_wrapper.m  
-To reproduce the results for the fMRI-volume-data execute the script fmri_group_searchlight_wrapper.m
+To reproduce the results for the fMRI-volume-data execute the script fmri_group_searchlight_wrapper.m  
 To reproduce the MEG-fMRI fusion results execute the script MEG_fmri_fusion_wrapper.m 
 
 ## First-level analyses:
