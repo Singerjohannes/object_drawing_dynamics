@@ -15,15 +15,15 @@ To run the code in this repository you will need the following toolboxes:
 All group-level results and the statistics in the paper can be reproduced with the code provided in this repository.  
 For this, you first need to download the data from OSF (Link:), unzip the data and put the folders in the following folder structure: 
 
-data/
-data/fmri/
-data/fmri/decoding/
-data/fmri/crossdecoding/
-data/fmri/preproc/
-data/fmri/rsa/
-data/meg/decoding/
-data/meg/crossdecoding/
-data/meg/preproc/ data/meg/rsa/
+data/  
+data/fmri/  
+data/fmri/decoding/  
+data/fmri/crossdecoding/  
+data/fmri/preproc/  
+data/fmri/rsa/  
+data/meg/decoding/  
+data/meg/crossdecoding/  
+data/meg/preproc/ data/meg/rsa/  
 data/meg/temporal_generalization/
 
 With this folder structure all scripts can be executed without changes.  
