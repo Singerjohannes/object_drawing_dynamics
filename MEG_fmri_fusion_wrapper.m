@@ -19,6 +19,10 @@ addpath(fullfile(path,'utils'));
 
 addpath(genpath(fullfile(path,'stats')));
 
+% add the decoding toolbox
+
+addpath(genpath((fullfile(path,'tdt_3.999','decoding_toolbox'))));
+
 % set plot defaults 
 
 set(0, 'defaultaxesfontsize', 14, 'defaultaxesfontweight', 'bold', ...
@@ -37,7 +41,7 @@ cluster_th = 0.001;
 significance_th = 0.05;
 tail = 'both';
 
-%% save results 
+%% load results 
 
 fmri_data_dir = fullfile(path,'data/fmri/rsa/');
 
@@ -74,6 +78,9 @@ end
 
 %% compute stats on fusion results 
 
+% set rng to a fixed number 
+rng(96);
+
 sig_fusion_photo_EVC = permutation_cluster_1sample_weight_alld (squeeze(EVC_fusion(1,:,:)), nperm, cluster_th, significance_th, tail);
 
 sig_fusion_drawing_EVC = permutation_cluster_1sample_weight_alld (squeeze(EVC_fusion(2,:,:)), nperm, cluster_th, significance_th, tail);
@@ -86,7 +93,7 @@ sig_fusion_drawing_LOC = permutation_cluster_1sample_weight_alld (squeeze(LOC_fu
 
 sig_fusion_sketch_LOC = permutation_cluster_1sample_weight_alld (squeeze(LOC_fusion(3,:,:)), nperm, cluster_th, significance_th, tail);
 
-%% compute bootstraps for peak and onset
+% compute bootstraps for peak and onset
 
 statsInfo.nperm = 10000;
 statsInfo.cluster_th = 0.001;
@@ -106,7 +113,7 @@ LOC_drawing_fusion_boot = bootstrap_fixed_1D(squeeze(LOC_fusion(2,:,:)), [-100:1
 
 LOC_sketch_fusion_boot = bootstrap_fixed_1D(squeeze(LOC_fusion(3,:,:)), [-100:10:1000],10000,statsInfo);
 
-%% bootstrap the difference for comparison 
+% bootstrap the difference for comparison 
 
 EVC_photo_drawing_fusion_bootdiff = bootstrap_fixed_1D_diff(squeeze(EVC_fusion(1,:,:)),squeeze(EVC_fusion(2,:,:)), [-100:10:1000],10000,statsInfo); 
 
@@ -120,7 +127,7 @@ LOC_photo_sketch_fusion_bootdiff = bootstrap_fixed_1D_diff(squeeze(LOC_fusion(1,
 
 LOC_drawing_sketch_fusion_bootdiff = bootstrap_fixed_1D_diff(squeeze(LOC_fusion(2,:,:)),squeeze(LOC_fusion(3,:,:)), [-100:10:1000],10000,statsInfo); 
 
-%% bootstrap difference between EVC and LOC peaks 
+% bootstrap difference between EVC and LOC peaks 
 
 EVC_LOC_photo_bootdiff = bootstrap_fixed_1D_diff(squeeze(EVC_fusion(1,:,:)),squeeze(LOC_fusion(1,:,:)), [-100:10:1000],10000,statsInfo);
 
@@ -148,7 +155,7 @@ end
 
 [drawing_sketch_equ_p, stat] = tost('one_sample', [-1 1], EVC_drawing_peaks-EVC_sketch_peaks);
 
-[~,~,~, adj_equ_p] = fdr_bh([photo_drawing_equ_p photo_sketch_equ_p drawing_sketch_equ_p]);
+[~,~,~, adj_equ_p_EVC] = fdr_bh([photo_drawing_equ_p photo_sketch_equ_p drawing_sketch_equ_p]);
 
 
 %% calculate TOST for peak latencies for LOC
@@ -171,7 +178,7 @@ end
 
 [drawing_sketch_equ_p, stat] = tost('one_sample', [-1 1], LOC_drawing_peaks-LOC_sketch_peaks);
 
-[~,~,~, adj_equ_p] = fdr_bh([photo_drawing_equ_p photo_sketch_equ_p drawing_sketch_equ_p]);
+[~,~,~, adj_equ_p_LOC] = fdr_bh([photo_drawing_equ_p photo_sketch_equ_p drawing_sketch_equ_p]);
 
 
 %% plot fusion results
@@ -211,8 +218,8 @@ title(['EVC'])
 ylabel('Pearson Correlation')
 xlabel('Time (s)')
 
-%print(fullfile(figure_path, ['EVC_fusion.jpeg']), ...
-%             '-djpeg', '-r600')
+print(fullfile(figure_path, ['EVC_fusion.svg']), ...
+             '-dsvg', '-r600')
 
 fig2 = figure;
 options = [];
@@ -248,10 +255,13 @@ title({'LOC'})
 ylabel('Pearson Correlation')
 xlabel('Time (s)')
 
-%print(fullfile(figure_path, ['LO_fusion.jpeg']), ...
-%             '-djpeg', '-r600')
+print(fullfile(figure_path, ['LO_fusion.svg']), ...
+             '-dsvg', '-r600')
 
 %% compute differences between conditions 
+
+% set rng to a fixed number 
+rng(96);
 
 EVC_fusion_photo_drawing = squeeze(EVC_fusion(1,:,:) - EVC_fusion(2,:,:));
 EVC_fusion_photo_sketch = squeeze(EVC_fusion(1,:,:) - EVC_fusion(3,:,:));
@@ -334,8 +344,8 @@ title(['EVC'])
 ylabel('Pearson Correlation Diff.')
 xlabel('Time (s)')
 
-%print(fullfile(figure_path, ['EVC_fusion_diff.jpeg']), ...
-%             '-djpeg', '-r600')
+print(fullfile(figure_path, ['EVC_fusion_diff.svg']), ...
+             '-dsvg', '-r600')
 
 fig2 = figure;
 options = [];
@@ -371,5 +381,5 @@ title('LOC')
 ylabel('Pearson Correlation Diff.')
 xlabel('Time (s)')
 
-%print(fullfile(figure_path, ['LOC_fusion_diff.jpeg']), ...
-%             '-djpeg', '-r600')
+print(fullfile(figure_path, ['LOC_fusion_diff.svg']), ...
+             '-dsvg', '-r600')

@@ -23,7 +23,7 @@ set(0, 'defaultaxesfontsize', 14, 'defaultaxesfontweight', 'bold', ...
 
 % get colormap 
 cmap = colormap('redblueTecplot');
-close all
+close all 
 
 
 %% save the results 
@@ -97,6 +97,9 @@ nperm = 10000;
 cluster_th = 0.001;
 significance_th = 0.05;
 tail = 'right';
+
+% set rng to a fixed number 
+rng(96);
 
 sig_decoding_photo_EVC = permutation_1sample_alld (photo_group_decoding(:,1)-50, nperm, cluster_th, significance_th, tail);
 
@@ -198,6 +201,9 @@ nperm = 10000;
 cluster_th = 0.001;
 significance_th = 0.05;
 tail = 'right';
+
+% set rng to a fixed number 
+rng(96);
 
 sig_decoding_photo_drawing_EVC = permutation_1sample_alld (photo_drawing_group_decoding(:,1)-50, nperm, cluster_th, significance_th, tail);
 

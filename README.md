@@ -41,6 +41,6 @@ To run the decoding, cross-decoding, temporal generalization and representationa
 Depending on the type of analyses this might be time intensive (up to 15-20 hours for the temporal generalization analysis). 
 
 To run the decoding (ROI or searchlight), cross-decoding (ROI or searchlight) and representational similarity analyses (only ROI) for the fMRI-data run fmri_first_level_wrapper.m and specify in the script which part (e.g. decoding, cross-decoding etc.) you want to run. 
-Depending on the type of analyses this might be time intensive (up to 3-4 hours for the searchlight analyses). 
+Depending on the type of analyses this might be time and/or memory intensive (up to 3-4 hours for the searchlight analyses; with parallelization and the amount of cores used the memory needed increases). 
 
 

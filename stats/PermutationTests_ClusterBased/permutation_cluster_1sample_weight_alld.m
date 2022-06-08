@@ -58,7 +58,7 @@ StatMapPerm = single(zeros([nperm nvariable]));
 StatMapPerm(1,cln{:}) = mean(data,1) ./ std(data);
 
 %perform permutations
-parfor i = 2:nperm
+for i = 2:nperm
     if ~rem(i,100)
         disp(['Create permutation samples: ' num2str(i) ' out of ' num2str(nperm)]);
     end
@@ -75,7 +75,7 @@ StatMapPermPV = StatMapPermPV;
 
 %find maximum cluster size and maximum weighted cluster for all permutation samples
 [clusterMaxSize(1), clusterMaxWei(1), clusters, clustersize, clusterweight] = find_clusters_weight_alld(squeeze(StatMapPerm(1,cln{:})), squeeze(StatMapPermPV(1,cln{:})<=cluster_th));
-parfor i = 2:nperm
+for i = 2:nperm
     if ~rem(i,100)
         disp(['Compute maximum cluster: ' num2str(i) ' out of ' num2str(nperm)]);
     end

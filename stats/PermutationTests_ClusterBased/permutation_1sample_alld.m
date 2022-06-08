@@ -52,7 +52,7 @@ StatMapPerm = single(zeros([nperm nvariable]));
 StatMapPerm(1,cln{:}) = mean(data,1) ./ std(data);
 
 %perform permutations
-parfor i = 2:nperm
+for i = 2:nperm
     if ~rem(i,100)
         disp(['Create permutation samples: ' num2str(i) ' out of ' num2str(nperm)]);
     end

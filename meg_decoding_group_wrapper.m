@@ -12,6 +12,8 @@ clc
 
 path = pwd;
 figure_path = fullfile(path,'figures');
+% create figure path
+if ~isdir(figure_path); mkdir(figure_path); end  
 
 % add utils 
 
@@ -50,6 +52,9 @@ load(fullfile(data_dir,'sketch_group_results.mat'))
 
 %% compute stats on decoding results 
 
+% set rng to a fixed number 
+rng(96);
+
 [sig_decoding_photo] = permutation_cluster_1sample_weight_alld (photo_group_acc-50, nperm, cluster_th, significance_th, tail);
 
 [sig_decoding_drawing] = permutation_cluster_1sample_weight_alld (drawing_group_acc-50, nperm, cluster_th, significance_th, tail);
@@ -64,19 +69,50 @@ statsInfo.significance_th = 0.05;
 statsInfo.tail = 'right';
 statsInfo.stat = [1 0]; 
 
+% set rng to a fixed number 
+rng(96);
+
 photo_decoding_boot = bootstrap_fixed_1D(photo_group_acc-50, [-100:10:1000],10000,statsInfo); 
 
 drawing_decoding_boot = bootstrap_fixed_1D(drawing_group_acc-50, [-100:10:1000],10000,statsInfo); 
 
 sketch_decoding_boot = bootstrap_fixed_1D(sketch_group_acc-50, [-100:10:1000],10000,statsInfo); 
 
-%% bootstrap the difference for comparison of peak latencies 
+% bootstrap the difference for comparison of peak latencies 
 
 photo_drawing_decoding_bootdiff = bootstrap_fixed_1D_diff(photo_group_acc-50,drawing_group_acc-50, [-100:1:1000],1000,statsInfo); 
 
 photo_sketch_decoding_bootdiff = bootstrap_fixed_1D_diff(photo_group_acc-50,sketch_group_acc-50, [-100:1:1000],1000,statsInfo); 
 
 drawing_sketch_decoding_bootdiff = bootstrap_fixed_1D_diff(drawing_group_acc-50,sketch_group_acc-50, [-100:1:1000],1000,statsInfo); 
+
+%% compute TOST for comparing peak latencies 
+
+%first get peaks 
+
+for sub = 1:size(photo_group_acc,1)
+    
+    [~, photo_peaks(sub)] = max(photo_group_acc(sub,:)); 
+    
+    [~, drawing_peaks(sub)] = max(drawing_group_acc(sub,:)); 
+
+    [~, sketch_peaks(sub)] = max(sketch_group_acc(sub,:)); 
+
+end
+
+mean_diff_photo_sketch = mean(photo_peaks-sketch_peaks); 
+
+mean_diff_photo_drawing = mean(photo_peaks-drawing_peaks); 
+
+mean_diff_drawing_sketch = mean(drawing_peaks-sketch_peaks); 
+
+[photo_drawing_equ_p, stat] = tost('one_sample', [-1 1], photo_peaks-drawing_peaks);
+
+[photo_sketch_equ_p, stat] = tost('one_sample', [-1 1], photo_peaks-sketch_peaks);
+
+[drawing_sketch_equ_p, stat] = tost('one_sample', [-1 1], drawing_peaks-sketch_peaks);
+
+[~,~,~, adj_equ_p] = fdr_bh([photo_drawing_equ_p photo_sketch_equ_p drawing_sketch_equ_p]);
 
 %% plot results
 fig = figure;
@@ -114,8 +150,8 @@ title('Category Decoding - MEG')
 ylabel('Decoding Accuracy (%)')
 xlabel('Time (s)')
 
-%print(fullfile(figure_path, ['group_cat_decoding.jpeg']), ...
- %             '-djpeg', '-r600')
+print(fullfile(figure_path, ['group_cat_decoding.svg']), ...
+              '-dsvg', '-r600')
 
 %% single plots 
 
@@ -143,6 +179,8 @@ legend('Photos', 'Drawings', 'Sketches');
 
 significance_th = 0.05;
 tail = 'both';
+% set rng to a fixed number 
+rng(96);
 
 photo_minus_drawing = photo_group_acc - drawing_group_acc;
 photo_minus_sketch = photo_group_acc - sketch_group_acc;
@@ -186,24 +224,24 @@ options.color_line = cmap(ceil(200),:)%rgb('Purple');
 this_line(3) = plot_areaerrorbar(drawing_minus_sketch,options);
 % plot stats 
 sig_photo_minus_drawing(sig_photo_minus_drawing==0)= NaN; 
-plot(options.x_axis,sig_photo_minus_drawing*-0.2, 'black');
+plot(options.x_axis,sig_photo_minus_drawing*-0.4, 'black');
 sig_photo_minus_sketch(sig_photo_minus_sketch==0)= NaN; 
-plot(options.x_axis,sig_photo_minus_sketch*-0.4, 'color',cmap(ceil(256),:));
+plot(options.x_axis,sig_photo_minus_sketch*-0.6, 'color',cmap(ceil(256),:));
 sig_drawing_minus_sketch(sig_drawing_minus_sketch==0)= NaN; 
-plot(options.x_axis,sig_drawing_minus_sketch*-0.6, 'color',cmap(ceil(200),:));
+plot(options.x_axis,sig_drawing_minus_sketch*-0.8, 'color',cmap(ceil(200),:));
 yline(0,':')
 for i= 0:0.1:1
 xline(i,':');
 end
 xlim([-0.1 1])
-ylim([-1 10])
+ylim([-2 10])
 legend(this_line, 'Photo-Drawing', 'Photo-Sketch', 'Drawing-Sketch')
 title('Category Decoding Differences - MEG')
 ylabel({'Decoding Accuracy', 'Difference (%)'})
 xlabel('Time (s)')
 
-%print(fullfile(figure_path, ['group_cat_decoding_differences.jpeg']), ...
-%              '-jpeg', '-r600')
+print(fullfile(figure_path, ['group_cat_decoding_differences.svg']), ...
+              '-dsvg', '-r600')
 
 
 %% load crossdecoding results
@@ -218,6 +256,9 @@ load(fullfile(data_dir,'photo_sketch_group_results.mat'))
 
 significance_th = 0.05;
 tail = 'right'; 
+
+% set rng to a fixed number 
+rng(96);
 
 [~,~,~,~,crossdecoding_photo_drawing_clusters,~,~,crossdecoding_photo_drawing_cluster_size, crossdecoding_photo_drawing_cluster_th] = permutation_cluster_1sample_weight_alld (photo_drawing_group_acc-50, nperm, cluster_th, significance_th, tail);
 
@@ -238,7 +279,7 @@ sig_crossdecoding_photo_drawing([crossdecoding_photo_drawing_clusters{crossdecod
 sig_crossdecoding_photo_sketch([crossdecoding_photo_sketch_clusters{crossdecoding_photo_sketch_cluster_size>max_thr}]) = 1;
 sig_crossdecoding_drawing_sketch([crossdecoding_drawing_sketch_clusters{crossdecoding_drawing_sketch_cluster_size>max_thr}]) = 1;
 
-%% bootstrap to get CIs for onset and peak 
+% bootstrap to get CIs for onset and peak 
 
 photo_drawing_decoding_boot = bootstrap_fixed_1D(photo_drawing_group_acc-50, [-100:10:1000],10000); 
 
@@ -246,7 +287,7 @@ drawing_sketch_decoding_boot = bootstrap_fixed_1D(photo_sketch_group_acc-50, [-1
 
 photo_sketch_decoding_boot = bootstrap_fixed_1D(drawing_sketch_group_acc-50, [-100:10:1000],10000); 
 
-%% bootstrap the difference for comparison 
+% bootstrap the difference for comparison 
 
 photo_drawing_vs_photo_sketch_bootdiff = bootstrap_fixed_1D_diff(photo_drawing_group_acc-50, photo_sketch_group_acc-50, [-100:10:1000],10000); 
 
@@ -257,7 +298,7 @@ drawing_sketch_vs_photo_sketch_bootdiff = bootstrap_fixed_1D_diff(drawing_sketch
 %% TOST for crossdecoding peaks  
 
 %first get peaks 
-for sub = 1:length(subs) 
+for sub = 1:size(photo_drawing_group_acc,1) 
     
     [~, photo_drawing_peaks(sub)] = max(photo_drawing_group_acc(sub,:)); 
     
@@ -276,8 +317,6 @@ end
 [~,~,~, adj_equ_p] = fdr_bh([photo_drawing_drawing_sketch_equ_p photo_drawing_photo_sketch_equ_p drawing_sketch_photo_sketch_equ_p]);
 
 %% plot crossdecoding with error bars 
-
-figure_path = '/data/pt_02348/objdraw/group_level/meg/crossdecoding/';
 
 clear this_line
 fig = figure;
@@ -314,8 +353,8 @@ title('Category Cross-Decoding')
 ylabel('Decoding Accuracy (%)')
 xlabel('Time (s)')
 
-%print(fullfile(figure_path, ['crossdecoding_group_level.jpeg']),...
-%             '-djpeg', '-r600')
+print(fullfile(figure_path, ['crossdecoding_group_level.svg']),...
+             '-dsvg', '-r600')
 
 
 %% load temporal generalization results
@@ -332,6 +371,9 @@ nperm = 10000;
 cluster_th = 0.001;
 significance_th = 0.05;
 tail = 'right';
+
+% set rng to a fixed number 
+rng(96);
 
 [~,sig_temp_gen_photo] = permutation_cluster_1sample_weight_alld (permute(temp_gen_photo_group_acc-50,[3 1 2]), nperm, cluster_th, significance_th, tail);
 [~,sig_temp_gen_drawing] = permutation_cluster_1sample_weight_alld (permute(temp_gen_drawing_group_acc-50,[3 1 2]), nperm, cluster_th, significance_th, tail);
@@ -395,14 +437,17 @@ y = linspace(111,1);
 plot(x,y, 'black', 'LineWidth', 1);
 hold off
 
-%print(fullfile(figure_path, ['group_temp_gen.jpeg']), ...
-%             '-djpeg', '-r600')
+print(fullfile(figure_path, ['group_temp_gen.svg']), ...
+             '-dsvg', '-r600')
 
          
 %% run statistics on differences between temporal generalization results  
 
 tail= 'both';
 significance_th = 0.05; 
+
+% set rng to a fixed number 
+rng(96);
 
 [~,sigWei_temp_gen_photo_minus_drawing,~,~,temp_gen_photo_minus_drawing_clusters,temp_gen_photo_minus_drawing_cluster_size,temp_gen_photo_minus_drawing_cluster_th] = permutation_cluster_1sample_weight_alld (permute(temp_gen_photo_group_acc-temp_gen_drawing_group_acc,[3 1 2]), nperm, cluster_th, significance_th, tail);
 [~,sigWei_temp_gen_drawing_minus_sketch,~,~,temp_gen_drawing_minus_sketch_clusters,temp_gen_drawing_minus_sketch_cluster_size,temp_gen_drawing_minus_sketch_cluster_th]= permutation_cluster_1sample_weight_alld (permute(temp_gen_drawing_group_acc-temp_gen_sketch_group_acc,[3 1 2]), nperm, cluster_th, significance_th, tail);
@@ -474,5 +519,5 @@ y = linspace(111,1);
 plot(x,y, 'black', 'LineWidth', 1);
 axis square
 
-%print(fullfile(figure_path, ['group_temp_gen_diff.jpeg']), ...
-%             '-djpeg', '-r600')
+print(fullfile(figure_path, ['group_temp_gen_diff.svg']), ...
+             '-dsvg', '-r600')

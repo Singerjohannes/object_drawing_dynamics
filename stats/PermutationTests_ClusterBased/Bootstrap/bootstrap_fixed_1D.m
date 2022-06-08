@@ -45,7 +45,7 @@ end
 bootsamples = randi(nobs,nboot,nobs);
 
 %compute onset and peak for bootstrap samples
-parfor i = 1:nboot
+for i = 1:nboot
     % nboot
     
     if ~rem(i,5)

@@ -34,19 +34,21 @@ load(fullfile(data_dir,'photo_group_searchlight_results.mat'))
 load(fullfile(data_dir,'drawing_group_searchlight_results.mat'))
 load(fullfile(data_dir,'sketch_group_searchlight_results.mat'))
 
-%% compute stats for decoding results --> this needs a lot of memory (~45GB RAM), skip this and the following step and load the precomputed results if you do not have enough RAM available 
+%% compute stats for decoding results --> this needs a lot of memory (~45GB RAM), skip this and load the precomputed results if you do not have enough RAM available 
 
 nperm = 10000;
 cluster_th = 0.001;
 significance_th = 0.05;
 tail = 'right';
 
+% set rng to a fixed number 
+rng(96);
+
 sig_searchlight_photo = permutation_cluster_1sample_weight_alld_less_mem (photo_resultsvol-50, nperm, cluster_th, significance_th, tail);
 sig_searchlight_drawing =  permutation_cluster_1sample_weight_alld_less_mem (drawing_resultsvol-50, nperm, cluster_th, significance_th, tail);
 sig_searchlight_sketch =  permutation_cluster_1sample_weight_alld_less_mem (sketch_resultsvol-50, nperm, cluster_th, significance_th, tail);
 
-%% compute stats differences 
-% 
+% compute stats differences 
 nperm = 10000;
 cluster_th = 0.001;
 significance_th = 0.05;
@@ -89,6 +91,9 @@ nperm = 10000;
 cluster_th = 0.001;
 significance_th = 0.05;
 tail = 'right';
+
+% set rng to a fixed number 
+rng(96);
 
 [~,~,~,~,crossdecoding_photo_drawing_clusters,~,~,crossdecoding_photo_drawing_cluster_size, crossdecoding_photo_drawing_cluster_th] = permutation_cluster_1sample_weight_alld (photo_drawing_resultsvol-50, nperm, cluster_th, significance_th, tail);
 
