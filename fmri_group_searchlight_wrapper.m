@@ -54,15 +54,37 @@ cluster_th = 0.001;
 significance_th = 0.05;
 tail = 'both';
 
-sig_searchlight_photo_drawing = permutation_cluster_1sample_weight_alld_less_mem (photo_resultsvol-drawing_resultsvol, nperm, cluster_th, significance_th, tail);
-sig_searchlight_drawing_sketch =  permutation_cluster_1sample_weight_alld_less_mem (drawing_resultsvol-sketch_resultsvol, nperm, cluster_th, significance_th, tail);
-sig_searchlight_photo_sketch =  permutation_cluster_1sample_weight_alld_less_mem (photo_resultsvol-sketch_resultsvol, nperm, cluster_th, significance_th, tail);
+[~,~,~,~,photo_minus_drawing_clusters,~,~,photo_minus_drawing_cluster_size, photo_minus_drawing_cluster_th] = permutation_cluster_1sample_weight_alld (photo_resultsvol-drawing_resultsvol, nperm, cluster_th, significance_th, tail);
+
+[~,~,~,~,drawing_minus_sketch_clusters,~,~,drawing_minus_sketch_cluster_size, drawing_minus_sketch_cluster_th] = permutation_cluster_1sample_weight_alld (drawing_resultsvol-sketch_resultsvol, nperm, cluster_th, significance_th, tail);
+
+[~,~,~,~,photo_minus_sketch_clusters,~,~,photo_minus_sketch_cluster_size, photo_minus_sketch_cluster_th] = permutation_cluster_1sample_weight_alld (photo_resultsvol-sketch_resultsvol, nperm, cluster_th, significance_th, tail);
+
+%get maximum threshold for correcting for multiple comparisons
+max_thr = max([photo_minus_drawing_cluster_th, drawing_minus_sketch_cluster_th, photo_minus_sketch_cluster_th]); 
+
+% intialize significance arrays 
+sz = size(photo_drawing_resultsvol);
+sig_searchlight_photo_minus_drawing = zeros(sz(2:end));
+sig_searchlight_photo_minus_sketch = zeros(sz(2:end));
+sig_searchlight_drawing_minus_sketch = zeros(sz(2:end));
+
+%now threshold the clusters again based on the maximum threshold 
+sig_searchlight_photo_minus_drawing([photo_minus_drawing_clusters{photo_minus_drawing_cluster_size>max_thr}]) = 1;
+sig_searchlight_drawing_minus_sketch([drawing_minus_sketch_clusters{drawing_minus_sketch_cluster_size>max_thr}]) = 1;
+sig_searchlight_photo_minus_sketch([photo_minus_sketch_clusters{photo_minus_sketch_cluster_size>max_thr}]) = 1;
 
 %% load precomputed significance maps 
+
+data_dir = fullfile(path,'data/fmri/decoding/searchlight'); 
 
 load(fullfile(data_dir,'sig_searchlight_photo.mat'))
 load(fullfile(data_dir,'sig_searchlight_drawing.mat'))
 load(fullfile(data_dir,'sig_searchlight_sketch.mat'))
+
+load(fullfile(data_dir,'sig_searchlight_photo_minus_drawing.mat'))
+load(fullfile(data_dir,'sig_searchlight_drawing_minus_sketch.mat'))
+load(fullfile(data_dir,'sig_searchlight_photo_minus_sketch.mat'))
 
 %% compute conjunction for all depictions
 
@@ -72,8 +94,8 @@ conjunction_decoding = sig_searchlight_photo&sig_searchlight_drawing&sig_searchl
 
 plot_conjunction_additive_coloring(conjunction_decoding, sig_searchlight_photo, sig_searchlight_drawing, sig_searchlight_sketch, '',cmap)
 
-%print(fullfile(results_path,'conjunction_map_with_overlaps_final_diff_coloring.svg'), ...
-%              '-dsvg', '-r600')
+print(fullfile(figure_path,'conjunction_map_decoding.svg'), ...
+              '-dsvg', '-r600')
           
 %% load crossdecoding results volumes 
 
@@ -117,9 +139,9 @@ sig_searchlight_drawing_sketch([crossdecoding_drawing_sketch_clusters{crossdecod
 
 %% load precomputed significance maps 
 
-load(fullfile(data_dir,'photo_drawing_group_searchlight_stats.mat'))
-load(fullfile(data_dir,'drawing_sketch_group_searchlight_stats.mat'))
-load(fullfile(data_dir,'photo_sketch_group_searchlight_stats.mat'))
+load(fullfile(data_dir,'sig_searchlight_photo_drawing.mat'))
+load(fullfile(data_dir,'sig_searchlight_photo_sketch.mat'))
+load(fullfile(data_dir,'sig_searchlight_drawing_sketch.mat'))
 
 %% compute conjunction for all comparisons
 
@@ -129,5 +151,5 @@ conjunction_crossdecoding = sig_searchlight_photo_drawing&sig_searchlight_drawin
 
 plot_conjunction_additive_coloring(conjunction_crossdecoding, sig_searchlight_photo_drawing, sig_searchlight_drawing_sketch, sig_searchlight_photo_sketch, '',cmap)
 
-%print(fullfile(results_path,'conjunction_map_crossdecoding.jpeg'), ...
-%              '-djpeg', '-r600')
+print(fullfile(figure_path,'conjunction_map_crossdecoding.svg'), ...
+              '-dsvg', '-r600')

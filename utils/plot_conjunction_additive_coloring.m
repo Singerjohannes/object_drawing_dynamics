@@ -30,9 +30,9 @@ color_limits= linspace(1,4,1) %scaled globally to overall min max over time
 %colors=cmap(numel(color_limits)+1:end,:); % so we end up with a color value for each of the 100 steps    
 
 % manually set colors 
-colors(1,:) = rgb('black')+1/255; %cmap(ceil(256),:);
-colors(2,:) = cmap(ceil(240),:);%cmap(ceil(213),:);
-colors(3,:) = cmap(ceil(190),:);%cmap(ceil(170),:);
+colors(1,:) = cmap(ceil(1),:); %rgb('black')+1/255
+colors(2,:) = cmap(256,:);%cmap(ceil(213),:);
+colors(3,:) = cmap(200,:);%cmap(ceil(170),:);
 colors(4,:) = cmap(ceil(128),:);
 
 % Creating T1 image with overlay in it. The idea is to put the overlay (which is in color) into the T1 (which is in

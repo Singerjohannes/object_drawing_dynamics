@@ -26,7 +26,7 @@ cmap = colormap('redblueTecplot');
 close all 
 
 
-%% save the results 
+%% load the results 
 
 data_dir = fullfile(path,'data/fmri/decoding/roi'); 
 
