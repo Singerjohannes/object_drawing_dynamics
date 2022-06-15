@@ -100,40 +100,41 @@ statsInfo.cluster_th = 0.001;
 statsInfo.significance_th = 0.05;
 statsInfo.tail = 'both';
 statsInfo.stat = [1 0];
+nboot = 100000; 
 
-EVC_photo_fusion_boot = bootstrap_fixed_1D(squeeze(EVC_fusion(1,:,:)), [-100:10:1000],10000,statsInfo); 
+EVC_photo_fusion_boot = bootstrap_fixed_1D(squeeze(EVC_fusion(1,:,:)), [-100:10:1000],nboot,statsInfo); 
 
-EVC_drawing_fusion_boot = bootstrap_fixed_1D(squeeze(EVC_fusion(2,:,:)), [-100:10:1000],10000,statsInfo); 
+EVC_drawing_fusion_boot = bootstrap_fixed_1D(squeeze(EVC_fusion(2,:,:)), [-100:10:1000],nboot,statsInfo); 
 
-EVC_sketch_fusion_boot = bootstrap_fixed_1D(squeeze(EVC_fusion(3,:,:)), [-100:10:1000],10000,statsInfo); 
+EVC_sketch_fusion_boot = bootstrap_fixed_1D(squeeze(EVC_fusion(3,:,:)), [-100:10:1000],nboot,statsInfo); 
 
-LOC_photo_fusion_boot = bootstrap_fixed_1D(squeeze(LOC_fusion(1,:,:)), [-100:10:1000],10000,statsInfo); 
+LOC_photo_fusion_boot = bootstrap_fixed_1D(squeeze(LOC_fusion(1,:,:)), [-100:10:1000],nboot,statsInfo); 
 
-LOC_drawing_fusion_boot = bootstrap_fixed_1D(squeeze(LOC_fusion(2,:,:)), [-100:10:1000],10000,statsInfo); 
+LOC_drawing_fusion_boot = bootstrap_fixed_1D(squeeze(LOC_fusion(2,:,:)), [-100:10:1000],nboot,statsInfo); 
 
-LOC_sketch_fusion_boot = bootstrap_fixed_1D(squeeze(LOC_fusion(3,:,:)), [-100:10:1000],10000,statsInfo);
+LOC_sketch_fusion_boot = bootstrap_fixed_1D(squeeze(LOC_fusion(3,:,:)), [-100:10:1000],nboot,statsInfo);
 
 % bootstrap the difference for comparison 
 
-EVC_photo_drawing_fusion_bootdiff = bootstrap_fixed_1D_diff(squeeze(EVC_fusion(1,:,:)),squeeze(EVC_fusion(2,:,:)), [-100:10:1000],10000,statsInfo); 
+EVC_photo_drawing_fusion_bootdiff = bootstrap_fixed_1D_diff(squeeze(EVC_fusion(1,:,:)),squeeze(EVC_fusion(2,:,:)), [-100:10:1000],nboot,statsInfo); 
 
-EVC_photo_sketch_fusion_bootdiff = bootstrap_fixed_1D_diff(squeeze(EVC_fusion(1,:,:)),squeeze(EVC_fusion(3,:,:)), [-100:10:1000],10000,statsInfo); 
+EVC_photo_sketch_fusion_bootdiff = bootstrap_fixed_1D_diff(squeeze(EVC_fusion(1,:,:)),squeeze(EVC_fusion(3,:,:)), [-100:10:1000],nboot,statsInfo); 
 
-EVC_drawing_sketch_fusion_bootdiff = bootstrap_fixed_1D_diff(squeeze(EVC_fusion(2,:,:)),squeeze(EVC_fusion(3,:,:)), [-100:10:1000],10000,statsInfo); 
+EVC_drawing_sketch_fusion_bootdiff = bootstrap_fixed_1D_diff(squeeze(EVC_fusion(2,:,:)),squeeze(EVC_fusion(3,:,:)), [-100:10:1000],nboot,statsInfo); 
 
-LOC_photo_drawing_fusion_bootdiff = bootstrap_fixed_1D_diff(squeeze(LOC_fusion(1,:,:)),squeeze(LOC_fusion(2,:,:)), [-100:10:1000],10000,statsInfo); 
+LOC_photo_drawing_fusion_bootdiff = bootstrap_fixed_1D_diff(squeeze(LOC_fusion(1,:,:)),squeeze(LOC_fusion(2,:,:)), [-100:10:1000],nboot,statsInfo); 
 
-LOC_photo_sketch_fusion_bootdiff = bootstrap_fixed_1D_diff(squeeze(LOC_fusion(1,:,:)),squeeze(LOC_fusion(3,:,:)), [-100:10:1000],10000,statsInfo); 
+LOC_photo_sketch_fusion_bootdiff = bootstrap_fixed_1D_diff(squeeze(LOC_fusion(1,:,:)),squeeze(LOC_fusion(3,:,:)), [-100:10:1000],nboot,statsInfo); 
 
-LOC_drawing_sketch_fusion_bootdiff = bootstrap_fixed_1D_diff(squeeze(LOC_fusion(2,:,:)),squeeze(LOC_fusion(3,:,:)), [-100:10:1000],10000,statsInfo); 
+LOC_drawing_sketch_fusion_bootdiff = bootstrap_fixed_1D_diff(squeeze(LOC_fusion(2,:,:)),squeeze(LOC_fusion(3,:,:)), [-100:10:1000],nboot,statsInfo); 
 
 % bootstrap difference between EVC and LOC peaks 
 
-EVC_LOC_photo_bootdiff = bootstrap_fixed_1D_diff(squeeze(EVC_fusion(1,:,:)),squeeze(LOC_fusion(1,:,:)), [-100:10:1000],10000,statsInfo);
+EVC_LOC_photo_bootdiff = bootstrap_fixed_1D_diff(squeeze(EVC_fusion(1,:,:)),squeeze(LOC_fusion(1,:,:)), [-100:10:1000],nboot,statsInfo);
 
-EVC_LOC_drawing_bootdiff = bootstrap_fixed_1D_diff(squeeze(EVC_fusion(2,:,:)),squeeze(LOC_fusion(2,:,:)), [-100:10:1000],10000,statsInfo);
+EVC_LOC_drawing_bootdiff = bootstrap_fixed_1D_diff(squeeze(EVC_fusion(2,:,:)),squeeze(LOC_fusion(2,:,:)), [-100:10:1000],nboot,statsInfo);
 
-EVC_LOC_sketch_bootdiff = bootstrap_fixed_1D_diff(squeeze(EVC_fusion(3,:,:)),squeeze(LOC_fusion(3,:,:)), [-100:10:1000],10000,statsInfo);
+EVC_LOC_sketch_bootdiff = bootstrap_fixed_1D_diff(squeeze(EVC_fusion(3,:,:)),squeeze(LOC_fusion(3,:,:)), [-100:10:1000],nboot,statsInfo);
 
 %% calculate TOST for peak latencies for EVC
 

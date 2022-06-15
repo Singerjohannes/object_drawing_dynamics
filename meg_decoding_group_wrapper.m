@@ -68,23 +68,24 @@ statsInfo.cluster_th = 0.001;
 statsInfo.significance_th = 0.05;
 statsInfo.tail = 'right';
 statsInfo.stat = [1 0]; 
+nboot = 100000; 
 
 % set rng to a fixed number 
 rng(96);
 
-photo_decoding_boot = bootstrap_fixed_1D(photo_group_acc-50, [-100:10:1000],10000,statsInfo); 
+photo_decoding_boot = bootstrap_fixed_1D(photo_group_acc-50, [-100:10:1000],nboot,statsInfo); 
 
-drawing_decoding_boot = bootstrap_fixed_1D(drawing_group_acc-50, [-100:10:1000],10000,statsInfo); 
+drawing_decoding_boot = bootstrap_fixed_1D(drawing_group_acc-50, [-100:10:1000],nboot,statsInfo); 
 
-sketch_decoding_boot = bootstrap_fixed_1D(sketch_group_acc-50, [-100:10:1000],10000,statsInfo); 
+sketch_decoding_boot = bootstrap_fixed_1D(sketch_group_acc-50, [-100:10:1000],nboot,statsInfo); 
 
 % bootstrap the difference for comparison of peak latencies 
 
-photo_drawing_decoding_bootdiff = bootstrap_fixed_1D_diff(photo_group_acc-50,drawing_group_acc-50, [-100:1:1000],1000,statsInfo); 
+photo_drawing_decoding_bootdiff = bootstrap_fixed_1D_diff(photo_group_acc-50,drawing_group_acc-50, [-100:1:1000],nboot,statsInfo); 
 
-photo_sketch_decoding_bootdiff = bootstrap_fixed_1D_diff(photo_group_acc-50,sketch_group_acc-50, [-100:1:1000],1000,statsInfo); 
+photo_sketch_decoding_bootdiff = bootstrap_fixed_1D_diff(photo_group_acc-50,sketch_group_acc-50, [-100:1:1000],nboot,statsInfo); 
 
-drawing_sketch_decoding_bootdiff = bootstrap_fixed_1D_diff(drawing_group_acc-50,sketch_group_acc-50, [-100:1:1000],1000,statsInfo); 
+drawing_sketch_decoding_bootdiff = bootstrap_fixed_1D_diff(drawing_group_acc-50,sketch_group_acc-50, [-100:1:1000],nboot,statsInfo); 
 
 %% compute TOST for comparing peak latencies 
 
@@ -255,6 +256,7 @@ load(fullfile(data_dir,'photo_sketch_group_results.mat'))
 %% compute stats for crossdecoding 
 
 significance_th = 0.05;
+nboot = 100000; 
 tail = 'right'; 
 
 % set rng to a fixed number 
@@ -281,19 +283,19 @@ sig_crossdecoding_drawing_sketch([crossdecoding_drawing_sketch_clusters{crossdec
 
 % bootstrap to get CIs for onset and peak 
 
-photo_drawing_decoding_boot = bootstrap_fixed_1D(photo_drawing_group_acc-50, [-100:10:1000],10000); 
+photo_drawing_decoding_boot = bootstrap_fixed_1D(photo_drawing_group_acc-50, [-100:10:1000],nboot); 
 
-drawing_sketch_decoding_boot = bootstrap_fixed_1D(photo_sketch_group_acc-50, [-100:10:1000],10000); 
+drawing_sketch_decoding_boot = bootstrap_fixed_1D(photo_sketch_group_acc-50, [-100:10:1000],nboot); 
 
-photo_sketch_decoding_boot = bootstrap_fixed_1D(drawing_sketch_group_acc-50, [-100:10:1000],10000); 
+photo_sketch_decoding_boot = bootstrap_fixed_1D(drawing_sketch_group_acc-50, [-100:10:1000],nboot); 
 
 % bootstrap the difference for comparison 
 
-photo_drawing_vs_photo_sketch_bootdiff = bootstrap_fixed_1D_diff(photo_drawing_group_acc-50, photo_sketch_group_acc-50, [-100:10:1000],10000); 
+photo_drawing_vs_photo_sketch_bootdiff = bootstrap_fixed_1D_diff(photo_drawing_group_acc-50, photo_sketch_group_acc-50, [-100:10:1000],nboot); 
 
-photo_drawing_vs_drawing_sketch_bootdiff = bootstrap_fixed_1D_diff(photo_drawing_group_acc-50,drawing_sketch_group_acc-50, [-100:10:1000],10000); 
+photo_drawing_vs_drawing_sketch_bootdiff = bootstrap_fixed_1D_diff(photo_drawing_group_acc-50,drawing_sketch_group_acc-50, [-100:10:1000],nboot); 
 
-drawing_sketch_vs_photo_sketch_bootdiff = bootstrap_fixed_1D_diff(drawing_sketch_group_acc-50,photo_sketch_group_acc-50, [-100:10:1000],10000); 
+drawing_sketch_vs_photo_sketch_bootdiff = bootstrap_fixed_1D_diff(drawing_sketch_group_acc-50,photo_sketch_group_acc-50, [-100:10:1000],nboot); 
 
 %% TOST for crossdecoding peaks  
 

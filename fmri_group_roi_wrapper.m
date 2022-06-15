@@ -113,7 +113,7 @@ sig_decoding_drawing_LOC = permutation_1sample_alld (drawing_group_decoding(:,2)
 
 sig_decoding_sketch_LOC = permutation_1sample_alld (sketch_group_decoding(:,2)-50, nperm, cluster_th, significance_th, tail);
 
-% compute statistics on differences 
+% compute statistics on differences between types of depiction
 
 tail = 'both';
 
@@ -130,10 +130,21 @@ sig_photo_sketch_LOC = permutation_1sample_alld (photo_group_decoding(:,2)-sketc
 
 sig_drawing_sketch_LOC = permutation_1sample_alld (drawing_group_decoding(:,2)-sketch_group_decoding(:,2), nperm, cluster_th, significance_th, tail);
 
+% compute statistics on differences between ROIs
+
+tail = 'both';
+
+sig_photo_EVC_LOC = permutation_1sample_alld (photo_group_decoding(:,1)-photo_group_decoding(:,2), nperm, cluster_th, significance_th, tail);
+
+sig_drawing_EVC_LOC = permutation_1sample_alld (drawing_group_decoding(:,1)-drawing_group_decoding(:,2), nperm, cluster_th, significance_th, tail);
+
+sig_sketch_EVC_LOC = permutation_1sample_alld (sketch_group_decoding(:,1)-sketch_group_decoding(:,2), nperm, cluster_th, significance_th, tail);
+
 % control for multiple comparisons
 
 [~,~,~,adj_p_diff_EVC] = fdr_bh([sig_photo_drawing_EVC sig_photo_sketch_EVC sig_drawing_sketch_EVC]);
 [~,~,~,adj_p_diff_LOC] =  fdr_bh([sig_photo_drawing_LOC sig_photo_sketch_LOC sig_drawing_sketch_LOC]);
+[~,~,~,adj_p_diff_EVC_LOC] =  fdr_bh([sig_photo_EVC_LOC sig_drawing_EVC_LOC sig_sketch_EVC_LOC]);
 
 %% load the crossdecoding results 
 
