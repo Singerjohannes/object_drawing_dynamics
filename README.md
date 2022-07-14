@@ -4,7 +4,7 @@ This repository containes code for the paper "The spatiotemporal neural dynamics
 
 ## Requirements: 
 
-To run the code in this repository you will need the following toolboxes: 
+To run the code in this repository you will need the following toolboxes on your matlabpath: 
 
 - SPM12 (https://www.fil.ion.ucl.ac.uk/spm/software/spm12/)
 - The Decoding Toolbox 3.999 or newer (https://sites.google.com/site/tdtdecodingtoolbox/) 
