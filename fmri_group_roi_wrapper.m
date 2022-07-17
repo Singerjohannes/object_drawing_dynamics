@@ -38,15 +38,7 @@ load(fullfile(data_dir,'sketch_group_roi_results.mat'))
 
 roi_names = {'EVC'; 'LOC'};
 
-% set plot defaults 
-
-set(0, 'defaultaxesfontsize', 14, 'defaultaxesfontweight', 'bold', ...
-    'defaultlinelinewidth', 3, 'defaultaxesfontname', 'Helvetica') 
-
-%cmap = colormap('inferno');
-cmap = colormap('redblueTecplot');
-close all
-
+% bring data in right format for plotting
 all_accs = cat(2, mean(photo_group_decoding)', mean(drawing_group_decoding)', mean(sketch_group_decoding)');
 photo_se = [std(photo_group_decoding(:,1))/sqrt(length(photo_group_decoding)),...
             std(photo_group_decoding(:,2))/sqrt(length(photo_group_decoding))];
@@ -57,6 +49,7 @@ sketch_se = [std(sketch_group_decoding(:,1))/sqrt(length(sketch_group_decoding))
         
 all_se = cat(2, photo_se', drawing_se', sketch_se');
 
+% plot
 figure
 h = bar(all_accs-50, 'grouped','FaceColor', 'flat');
 h(1).CData = rgb('Black');
@@ -87,8 +80,8 @@ for i = 1:nbars
 end
 legend({'Photos'; 'Drawings'; 'Sketches'} ,'Location','northeast')
 
-%print(fullfile(figure_path, ['cat_decoding_ROI_final.jpeg']), ...
-%              '-djpeg', '-r300')
+print(fullfile(figure_path, ['cat_decoding_ROI_final.svg']), ...
+              '-dsvg', '-r600')
 
 %% compute statistics 
 
@@ -157,9 +150,8 @@ load(fullfile(data_dir,'photo_sketch_group_roi_results.mat'))
 %% plot 
 
 roi_names = {'EVC'; 'LOC'};
-cmap = colormap('redbluetecplot');
-close all
 
+%bring data in right format for plotting
 all_accs = cat(2, mean(photo_drawing_group_decoding)', mean(drawing_sketch_group_decoding)', mean(photo_sketch_group_decoding)');
 photo_se = [std(photo_drawing_group_decoding(:,1))/sqrt(length(photo_drawing_group_decoding)),...
             std(photo_drawing_group_decoding(:,2))/sqrt(length(photo_drawing_group_decoding))];
@@ -170,6 +162,7 @@ sketch_se = [std(photo_sketch_group_decoding(:,1))/sqrt(length(photo_sketch_grou
         
 all_se = cat(2, photo_se', drawing_se', sketch_se');
 
+% plot
 figure
 h = bar(all_accs-50, 'grouped','FaceColor', 'flat');
 h(1).CData = rgb('Black');
@@ -205,8 +198,6 @@ legend({'Photo-Drawing'; 'Drawing-Sketch'; 'Photo-Sketch'} ,'Location','northeas
 
 %% compute statistics 
 
-addpath(genpath('/data/pt_02348/objdraw/matlab/object_drawing_fusion/stats/'))
-
 % set stats defaults 
 nperm = 10000;
 cluster_th = 0.001;
@@ -228,26 +219,7 @@ sig_decoding_photo_sketch_LOC = permutation_1sample_alld (photo_sketch_group_dec
 
 sig_decoding_drawing_sketch_LOC = permutation_1sample_alld (drawing_sketch_group_decoding(:,2)-50, nperm, cluster_th, significance_th, tail);
 
-% compute statistics on differences 
-tail= 'both';
-
-sig_photo_drawing_photo_sketch_EVC = permutation_1sample_alld (photo_drawing_group_decoding(:,1)-photo_sketch_group_decoding(:,1), nperm, cluster_th, significance_th, tail);
-
-sig_photo_sketch_drawing_sketch_EVC = permutation_1sample_alld (photo_sketch_group_decoding(:,1)-drawing_sketch_group_decoding(:,1), nperm, cluster_th, significance_th, tail);
-
-sig_photo_drawing_drawing_sketch_EVC = permutation_1sample_alld (photo_drawing_group_decoding(:,1)-drawing_sketch_group_decoding(:,1), nperm, cluster_th, significance_th, tail);
-
-
-sig_photo_drawing_photo_sketch_LOC = permutation_1sample_alld (photo_drawing_group_decoding(:,2)-photo_sketch_group_decoding(:,2), nperm, cluster_th, significance_th, tail);
-
-sig_photo_sketch_drawing_sketch_LOC = permutation_1sample_alld (photo_sketch_group_decoding(:,2)-drawing_sketch_group_decoding(:,2), nperm, cluster_th, significance_th, tail);
-
-sig_photo_drawing_drawing_sketch_LOC = permutation_1sample_alld (photo_drawing_group_decoding(:,2)-drawing_sketch_group_decoding(:,2), nperm, cluster_th, significance_th, tail);
-
 % control for multiple comparisons
 
 [~,~,~,adj_p_EVC] = fdr_bh([sig_decoding_photo_drawing_EVC sig_decoding_photo_sketch_EVC sig_decoding_drawing_sketch_EVC]);
 [~,~,~,adj_p_LOC] = fdr_bh([sig_decoding_photo_drawing_LOC sig_decoding_photo_sketch_LOC sig_decoding_drawing_sketch_LOC]);
-
-[~,~,~,adj_p_diff_EVC] = fdr_bh([sig_photo_drawing_photo_sketch_EVC sig_photo_sketch_drawing_sketch_EVC sig_photo_drawing_drawing_sketch_EVC]);
-[~,~,~,adj_p_diff_LOC] =  fdr_bh([sig_photo_drawing_photo_sketch_LOC sig_photo_sketch_drawing_sketch_LOC sig_photo_drawing_drawing_sketch_LOC]);

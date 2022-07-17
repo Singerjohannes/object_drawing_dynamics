@@ -173,7 +173,6 @@ for i = 1:size(photo_group_acc,1)
     xticklabels(linspace(-0.1,1,12));
     hold off
 end 
-suptitle('Single subject decoding')
 legend('Photos', 'Drawings', 'Sketches');
 
 %% compute differences between decoding time courses
@@ -187,9 +186,9 @@ photo_minus_drawing = photo_group_acc - drawing_group_acc;
 photo_minus_sketch = photo_group_acc - sketch_group_acc;
 drawing_minus_sketch = drawing_group_acc - sketch_group_acc; 
 
-[~,~,~,~,photo_minus_drawing_clusters,~,~,photo_minus_drawing_cluster_size, photo_minus_drawing_cluster_th] = permutation_cluster_1sample_weight_alld (photo_minus_drawing, nperm, cluster_th, significance_th, tail);
-[~,~,~,~,photo_minus_sketch_clusters,~,~,photo_minus_sketch_cluster_size, photo_minus_sketch_cluster_th] = permutation_cluster_1sample_weight_alld (photo_minus_sketch, nperm, cluster_th, significance_th, tail);
-[~,~,~,~, drawing_minus_sketch_clusters,~,~,drawing_minus_sketch_cluster_size, drawing_minus_sketch_cluster_th] = permutation_cluster_1sample_weight_alld (drawing_minus_sketch, nperm, cluster_th, significance_th, tail);
+[~,~,~,~,photo_minus_drawing_clusters,photo_minus_drawing_cluster_size, photo_minus_drawing_cluster_th] = permutation_cluster_1sample_weight_alld (photo_minus_drawing, nperm, cluster_th, significance_th, tail);
+[~,~,~,~,photo_minus_sketch_clusters,photo_minus_sketch_cluster_size, photo_minus_sketch_cluster_th] = permutation_cluster_1sample_weight_alld (photo_minus_sketch, nperm, cluster_th, significance_th, tail);
+[~,~,~,~, drawing_minus_sketch_clusters,drawing_minus_sketch_cluster_size, drawing_minus_sketch_cluster_th] = permutation_cluster_1sample_weight_alld (drawing_minus_sketch, nperm, cluster_th, significance_th, tail);
 
 %get maximum threshold for correcting for multiple comparisons
 max_thr = max([photo_minus_drawing_cluster_th, photo_minus_sketch_cluster_th, drawing_minus_sketch_cluster_th]); 
@@ -262,11 +261,11 @@ tail = 'right';
 % set rng to a fixed number 
 rng(96);
 
-[~,~,~,~,crossdecoding_photo_drawing_clusters,~,~,crossdecoding_photo_drawing_cluster_size, crossdecoding_photo_drawing_cluster_th] = permutation_cluster_1sample_weight_alld (photo_drawing_group_acc-50, nperm, cluster_th, significance_th, tail);
+[~,~,~,~,crossdecoding_photo_drawing_clusters,crossdecoding_photo_drawing_cluster_size, crossdecoding_photo_drawing_cluster_th] = permutation_cluster_1sample_weight_alld (photo_drawing_group_acc-50, nperm, cluster_th, significance_th, tail);
 
-[~,~,~,~,crossdecoding_drawing_sketch_clusters,~,~,crossdecoding_drawing_sketch_cluster_size, crossdecoding_drawing_sketch_cluster_th] = permutation_cluster_1sample_weight_alld (drawing_sketch_group_acc-50, nperm, cluster_th, significance_th, tail);
+[~,~,~,~,crossdecoding_drawing_sketch_clusters,crossdecoding_drawing_sketch_cluster_size, crossdecoding_drawing_sketch_cluster_th] = permutation_cluster_1sample_weight_alld (drawing_sketch_group_acc-50, nperm, cluster_th, significance_th, tail);
 
-[~,~,~,~,crossdecoding_photo_sketch_clusters,~,~,crossdecoding_photo_sketch_cluster_size, crossdecoding_photo_sketch_cluster_th] = permutation_cluster_1sample_weight_alld (photo_sketch_group_acc-50, nperm, cluster_th, significance_th, tail);
+[~,~,~,~,crossdecoding_photo_sketch_clusters,crossdecoding_photo_sketch_cluster_size, crossdecoding_photo_sketch_cluster_th] = permutation_cluster_1sample_weight_alld (photo_sketch_group_acc-50, nperm, cluster_th, significance_th, tail);
 
 %get maximum threshold for correcting for multiple comparisons
 max_thr = max([crossdecoding_photo_drawing_cluster_th, crossdecoding_photo_sketch_cluster_th, crossdecoding_drawing_sketch_cluster_th]); 
@@ -377,9 +376,9 @@ tail = 'right';
 % set rng to a fixed number 
 rng(96);
 
-[~,sig_temp_gen_photo] = permutation_cluster_1sample_weight_alld (permute(temp_gen_photo_group_acc-50,[3 1 2]), nperm, cluster_th, significance_th, tail);
-[~,sig_temp_gen_drawing] = permutation_cluster_1sample_weight_alld (permute(temp_gen_drawing_group_acc-50,[3 1 2]), nperm, cluster_th, significance_th, tail);
-[~,sig_temp_gen_sketch] = permutation_cluster_1sample_weight_alld (permute(temp_gen_sketch_group_acc-50,[3 1 2]), nperm, cluster_th, significance_th, tail);
+[sig_temp_gen_photo] = permutation_cluster_1sample_weight_alld (permute(temp_gen_photo_group_acc-50,[3 1 2]), nperm, cluster_th, significance_th, tail);
+[sig_temp_gen_drawing] = permutation_cluster_1sample_weight_alld (permute(temp_gen_drawing_group_acc-50,[3 1 2]), nperm, cluster_th, significance_th, tail);
+[sig_temp_gen_sketch] = permutation_cluster_1sample_weight_alld (permute(temp_gen_sketch_group_acc-50,[3 1 2]), nperm, cluster_th, significance_th, tail);
 
 %% plot temporal generalization with fieldtrip and statistical masks
 
@@ -441,8 +440,6 @@ hold off
 
 print(fullfile(figure_path, ['group_temp_gen.svg']), ...
              '-dsvg', '-r600')
-
-         
 %% run statistics on differences between temporal generalization results  
 
 tail= 'both';
@@ -451,9 +448,9 @@ significance_th = 0.05;
 % set rng to a fixed number 
 rng(96);
 
-[~,sigWei_temp_gen_photo_minus_drawing,~,~,temp_gen_photo_minus_drawing_clusters,temp_gen_photo_minus_drawing_cluster_size,temp_gen_photo_minus_drawing_cluster_th] = permutation_cluster_1sample_weight_alld (permute(temp_gen_photo_group_acc-temp_gen_drawing_group_acc,[3 1 2]), nperm, cluster_th, significance_th, tail);
-[~,sigWei_temp_gen_drawing_minus_sketch,~,~,temp_gen_drawing_minus_sketch_clusters,temp_gen_drawing_minus_sketch_cluster_size,temp_gen_drawing_minus_sketch_cluster_th]= permutation_cluster_1sample_weight_alld (permute(temp_gen_drawing_group_acc-temp_gen_sketch_group_acc,[3 1 2]), nperm, cluster_th, significance_th, tail);
-[~,sigWei_temp_gen_photo_minus_sketch,~,~,temp_gen_photo_minus_sketch_clusters,temp_gen_photo_minus_sketch_cluster_size,temp_gen_photo_minus_sketch_cluster_th] = permutation_cluster_1sample_weight_alld (permute(temp_gen_photo_group_acc-temp_gen_sketch_group_acc,[3 1 2]), nperm, cluster_th, significance_th, tail);
+[~,~,~,~,temp_gen_photo_minus_drawing_clusters,temp_gen_photo_minus_drawing_cluster_size,temp_gen_photo_minus_drawing_cluster_th] = permutation_cluster_1sample_weight_alld (permute(temp_gen_photo_group_acc-temp_gen_drawing_group_acc,[3 1 2]), nperm, cluster_th, significance_th, tail);
+[~,~,~,~,temp_gen_drawing_minus_sketch_clusters,temp_gen_drawing_minus_sketch_cluster_size,temp_gen_drawing_minus_sketch_cluster_th]= permutation_cluster_1sample_weight_alld (permute(temp_gen_drawing_group_acc-temp_gen_sketch_group_acc,[3 1 2]), nperm, cluster_th, significance_th, tail);
+[~,~,~,~,temp_gen_photo_minus_sketch_clusters,temp_gen_photo_minus_sketch_cluster_size,temp_gen_photo_minus_sketch_cluster_th] = permutation_cluster_1sample_weight_alld (permute(temp_gen_photo_group_acc-temp_gen_sketch_group_acc,[3 1 2]), nperm, cluster_th, significance_th, tail);
 
 %get maximum threshold for correcting for multiple comparisons
 max_thr = max([temp_gen_photo_minus_drawing_cluster_th, temp_gen_photo_minus_sketch_cluster_th, temp_gen_drawing_minus_sketch_cluster_th]); 
