@@ -8,6 +8,7 @@ To run the code in this repository you will need the following toolboxes on your
 
 - SPM12 (https://www.fil.ion.ucl.ac.uk/spm/software/spm12/)
 - The Decoding Toolbox 3.999 or newer (https://sites.google.com/site/tdtdecodingtoolbox/) 
+- fieldtrip (https://www.fieldtriptoolbox.org/)
 
 
 ## Group-level analyses: 
