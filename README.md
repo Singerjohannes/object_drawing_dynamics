@@ -37,8 +37,7 @@ To reproduce the MEG-fMRI fusion results execute the script MEG_fmri_fusion_wrap
 
 ## First-level analyses:
 
-We provide exemplary preprocessed MEG and fMRI data for a single subject to demonstrate how the first-level results are computed.  
-Make sure to unzip the files in the /data/meg/preproc/ and data/fmri/preproc/ folders before running the first-level scripts.  
+We provide exemplary preprocessed single subject MEG and fMRI data to demonstrate how the first-level results are computed.  
 
 To run the decoding, cross-decoding, temporal generalization and representational similarity analyses for the MEG-data run meg_first_level_wrapper.m and specify in the script which part (e.g. decoding, cross-decoding etc.) you want to run. 
 Depending on the type of analyses this might be time intensive (up to 15-20 hours for the temporal generalization analysis). 
