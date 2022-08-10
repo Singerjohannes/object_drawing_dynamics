@@ -27,7 +27,7 @@ end
 % set everything to calculate (dis)similarity estimates
 cfg.decoding.software = 'distance'; % the difference to 'similarity' is that this averages across data with the same label
 cfg.decoding.method = 'classification'; % this is more a placeholder
-cfg.decoding.train.classification.model_parameters = 'pearson'; % cross-validated Euclidean after noise normalization
+cfg.decoding.train.classification.model_parameters = 'pearson'; % correlation distance
 
 % This option below averages across (dis)similarity matrices of each
 % cross-validation iteration and across all cells of the lower diagonal

@@ -1,4 +1,4 @@
-%% script for aggregateting the searchlight decoding results 
+%% script for aggregating the searchlight decoding results 
 clear all 
 clc 
 
@@ -24,6 +24,10 @@ set(0, 'defaultaxesfontsize', 14, 'defaultaxesfontweight', 'bold', ...
 cmap = colormap('redblueTecplot');
 close all
 
+% specify if statistics should be computed or loaded from file, 0 for
+% loaded, 1 for computed
+compute_stats = 0; 
+
 %% load decoding results volumes 
 
 data_dir = fullfile(path,'data/fmri/decoding/searchlight');
@@ -36,43 +40,46 @@ load(fullfile(data_dir,'sketch_group_searchlight_results.mat'))
 
 %% compute stats for decoding results --> this needs a lot of memory (~45GB RAM), skip this and load the precomputed results if you do not have enough RAM available 
 
-nperm = 10000;
-cluster_th = 0.001;
-significance_th = 0.05;
-tail = 'right';
+if compute_stats
+    
+    nperm = 10000;
+    cluster_th = 0.001;
+    significance_th = 0.05;
+    tail = 'right';
 
-% set rng to a fixed number 
-rng(96);
+    % set rng to a fixed number 
+    rng(96);
 
-sig_searchlight_photo = permutation_cluster_1sample_weight_alld_less_mem (photo_resultsvol-50, nperm, cluster_th, significance_th, tail);
-sig_searchlight_drawing =  permutation_cluster_1sample_weight_alld_less_mem (drawing_resultsvol-50, nperm, cluster_th, significance_th, tail);
-sig_searchlight_sketch =  permutation_cluster_1sample_weight_alld_less_mem (sketch_resultsvol-50, nperm, cluster_th, significance_th, tail);
+    sig_searchlight_photo = permutation_cluster_1sample_weight_alld_less_mem (photo_resultsvol-50, nperm, cluster_th, significance_th, tail);
+    sig_searchlight_drawing =  permutation_cluster_1sample_weight_alld_less_mem (drawing_resultsvol-50, nperm, cluster_th, significance_th, tail);
+    sig_searchlight_sketch =  permutation_cluster_1sample_weight_alld_less_mem (sketch_resultsvol-50, nperm, cluster_th, significance_th, tail);
 
-% compute stats differences 
-nperm = 10000;
-cluster_th = 0.001;
-significance_th = 0.05;
-tail = 'both';
+    % compute stats differences 
+    nperm = 10000;
+    cluster_th = 0.001;
+    significance_th = 0.05;
+    tail = 'both';
 
-[~,~,~,~,photo_minus_drawing_clusters,~,~,photo_minus_drawing_cluster_size, photo_minus_drawing_cluster_th] = permutation_cluster_1sample_weight_alld (photo_resultsvol-drawing_resultsvol, nperm, cluster_th, significance_th, tail);
+    [~,~,~,~,photo_minus_drawing_clusters,~,~,photo_minus_drawing_cluster_size, photo_minus_drawing_cluster_th] = permutation_cluster_1sample_weight_alld (photo_resultsvol-drawing_resultsvol, nperm, cluster_th, significance_th, tail);
 
-[~,~,~,~,drawing_minus_sketch_clusters,~,~,drawing_minus_sketch_cluster_size, drawing_minus_sketch_cluster_th] = permutation_cluster_1sample_weight_alld (drawing_resultsvol-sketch_resultsvol, nperm, cluster_th, significance_th, tail);
+    [~,~,~,~,drawing_minus_sketch_clusters,~,~,drawing_minus_sketch_cluster_size, drawing_minus_sketch_cluster_th] = permutation_cluster_1sample_weight_alld (drawing_resultsvol-sketch_resultsvol, nperm, cluster_th, significance_th, tail);
 
-[~,~,~,~,photo_minus_sketch_clusters,~,~,photo_minus_sketch_cluster_size, photo_minus_sketch_cluster_th] = permutation_cluster_1sample_weight_alld (photo_resultsvol-sketch_resultsvol, nperm, cluster_th, significance_th, tail);
+    [~,~,~,~,photo_minus_sketch_clusters,~,~,photo_minus_sketch_cluster_size, photo_minus_sketch_cluster_th] = permutation_cluster_1sample_weight_alld (photo_resultsvol-sketch_resultsvol, nperm, cluster_th, significance_th, tail);
 
-%get maximum threshold for correcting for multiple comparisons
-max_thr = max([photo_minus_drawing_cluster_th, drawing_minus_sketch_cluster_th, photo_minus_sketch_cluster_th]); 
+    %get maximum threshold for correcting for multiple comparisons
+    max_thr = max([photo_minus_drawing_cluster_th, drawing_minus_sketch_cluster_th, photo_minus_sketch_cluster_th]); 
 
-% intialize significance arrays 
-sz = size(photo_drawing_resultsvol);
-sig_searchlight_photo_minus_drawing = zeros(sz(2:end));
-sig_searchlight_photo_minus_sketch = zeros(sz(2:end));
-sig_searchlight_drawing_minus_sketch = zeros(sz(2:end));
+    % intialize significance arrays 
+    sz = size(photo_drawing_resultsvol);
+    sig_searchlight_photo_minus_drawing = zeros(sz(2:end));
+    sig_searchlight_photo_minus_sketch = zeros(sz(2:end));
+    sig_searchlight_drawing_minus_sketch = zeros(sz(2:end));
 
-%now threshold the clusters again based on the maximum threshold 
-sig_searchlight_photo_minus_drawing([photo_minus_drawing_clusters{photo_minus_drawing_cluster_size>max_thr}]) = 1;
-sig_searchlight_drawing_minus_sketch([drawing_minus_sketch_clusters{drawing_minus_sketch_cluster_size>max_thr}]) = 1;
-sig_searchlight_photo_minus_sketch([photo_minus_sketch_clusters{photo_minus_sketch_cluster_size>max_thr}]) = 1;
+    %now threshold the clusters again based on the maximum threshold 
+    sig_searchlight_photo_minus_drawing([photo_minus_drawing_clusters{photo_minus_drawing_cluster_size>max_thr}]) = 1;
+    sig_searchlight_drawing_minus_sketch([drawing_minus_sketch_clusters{drawing_minus_sketch_cluster_size>max_thr}]) = 1;
+    sig_searchlight_photo_minus_sketch([photo_minus_sketch_clusters{photo_minus_sketch_cluster_size>max_thr}]) = 1;
+end 
 
 %% load precomputed significance maps 
 
@@ -109,33 +116,36 @@ load(fullfile(data_dir,'photo_sketch_group_searchlight_results.mat'))
 
 %% compute statistics for crossdecoding with correction for multiple tests --> skip this step if you do not have enough RAM (~45GB) available 
 
-nperm = 10000;
-cluster_th = 0.001;
-significance_th = 0.05;
-tail = 'right';
+if compute_stats
+    
+    nperm = 10000;
+    cluster_th = 0.001;
+    significance_th = 0.05;
+    tail = 'right';
 
-% set rng to a fixed number 
-rng(96);
+    % set rng to a fixed number 
+    rng(96);
 
-[~,~,~,~,crossdecoding_photo_drawing_clusters,~,~,crossdecoding_photo_drawing_cluster_size, crossdecoding_photo_drawing_cluster_th] = permutation_cluster_1sample_weight_alld (photo_drawing_resultsvol-50, nperm, cluster_th, significance_th, tail);
+    [~,~,~,~,crossdecoding_photo_drawing_clusters,~,~,crossdecoding_photo_drawing_cluster_size, crossdecoding_photo_drawing_cluster_th] = permutation_cluster_1sample_weight_alld (photo_drawing_resultsvol-50, nperm, cluster_th, significance_th, tail);
 
-[~,~,~,~,crossdecoding_drawing_sketch_clusters,~,~,crossdecoding_drawing_sketch_cluster_size, crossdecoding_drawing_sketch_cluster_th] = permutation_cluster_1sample_weight_alld (drawing_sketch_resultsvol-50, nperm, cluster_th, significance_th, tail);
+    [~,~,~,~,crossdecoding_drawing_sketch_clusters,~,~,crossdecoding_drawing_sketch_cluster_size, crossdecoding_drawing_sketch_cluster_th] = permutation_cluster_1sample_weight_alld (drawing_sketch_resultsvol-50, nperm, cluster_th, significance_th, tail);
 
-[~,~,~,~,crossdecoding_photo_sketch_clusters,~,~,crossdecoding_photo_sketch_cluster_size, crossdecoding_photo_sketch_cluster_th] = permutation_cluster_1sample_weight_alld (photo_sketch_resultsvol-50, nperm, cluster_th, significance_th, tail);
+    [~,~,~,~,crossdecoding_photo_sketch_clusters,~,~,crossdecoding_photo_sketch_cluster_size, crossdecoding_photo_sketch_cluster_th] = permutation_cluster_1sample_weight_alld (photo_sketch_resultsvol-50, nperm, cluster_th, significance_th, tail);
 
-%get maximum threshold for correcting for multiple comparisons
-max_thr = max([crossdecoding_photo_drawing_cluster_th, crossdecoding_photo_sketch_cluster_th, crossdecoding_drawing_sketch_cluster_th]); 
+    %get maximum threshold for correcting for multiple comparisons
+    max_thr = max([crossdecoding_photo_drawing_cluster_th, crossdecoding_photo_sketch_cluster_th, crossdecoding_drawing_sketch_cluster_th]); 
 
-% intialize significance arrays 
-sz = size(photo_drawing_resultsvol);
-sig_searchlight_photo_drawing = zeros(sz(2:end));
-sig_searchlight_photo_sketch = zeros(sz(2:end));
-sig_searchlight_drawing_sketch = zeros(sz(2:end));
+    % intialize significance arrays 
+    sz = size(photo_drawing_resultsvol);
+    sig_searchlight_photo_drawing = zeros(sz(2:end));
+    sig_searchlight_photo_sketch = zeros(sz(2:end));
+    sig_searchlight_drawing_sketch = zeros(sz(2:end));
 
-%now threshold the clusters again based on the maximum threshold 
-sig_searchlight_photo_drawing([crossdecoding_photo_drawing_clusters{crossdecoding_photo_drawing_cluster_size>max_thr}]) = 1;
-sig_searchlight_photo_sketch([crossdecoding_photo_sketch_clusters{crossdecoding_photo_sketch_cluster_size>max_thr}]) = 1;
-sig_searchlight_drawing_sketch([crossdecoding_drawing_sketch_clusters{crossdecoding_drawing_sketch_cluster_size>max_thr}]) = 1;
+    %now threshold the clusters again based on the maximum threshold 
+    sig_searchlight_photo_drawing([crossdecoding_photo_drawing_clusters{crossdecoding_photo_drawing_cluster_size>max_thr}]) = 1;
+    sig_searchlight_photo_sketch([crossdecoding_photo_sketch_clusters{crossdecoding_photo_sketch_cluster_size>max_thr}]) = 1;
+    sig_searchlight_drawing_sketch([crossdecoding_drawing_sketch_clusters{crossdecoding_drawing_sketch_cluster_size>max_thr}]) = 1;
+end 
 
 %% load precomputed significance maps 
 

@@ -21,9 +21,14 @@ addpath(fullfile(path,'utils'));
 
 addpath(fullfile(path,'first_level','fmri'));
 
-% add the decoding toolbox
-
-addpath(fullfile(path,'tdt_3.999','decoding_toolbox'));
+% setup the decoding toolbox 
+try 
+    decoding_defaults;
+catch 
+    tdt_path = input('The Decoding Toolbox seems to be not on your path. Please enter the path to your TDT version:\n','s');
+    addpath(tdt_path);
+    decoding_defaults;
+end 
 
 %initialize decoding toolbox
 decoding_defaults;
@@ -39,8 +44,8 @@ close all
 
 % specify which steps to compute
 
-cfg.do.decoding_ROI = 1; % runs the category decoding for a single subject for photos, drawings and sketches separately in 2 ROIs: EVC and LOC
-cfg.do.decoding_searchlight = 0; % runs the category decoding for a single subject for photos, drawings and sketches separately across the whole brain
+cfg.do.decoding_ROI = 0; % runs the category decoding for a single subject for photos, drawings and sketches separately in 2 ROIs: EVC and LOC
+cfg.do.decoding_searchlight = 1; % runs the category decoding for a single subject for photos, drawings and sketches separately across the whole brain
 cfg.do.cross_decoding_ROI = 0; % runs the category crossdecoding for a single subject for three comparisons: photo-drawing, drawing-sketch and photo-sketch separately in 2 ROIs: EVC and LOC
 cfg.do.cross_decoding_searchlight = 0; % runs the category crossdecoding for a single subject for three comparisons: photo-drawing, drawing-sketch and photo-sketch separately across the whole brain
 cfg.do.RSA = 0; % computes representational dissimilarity matrices (RDMs) for a single subject for two ROIs: EVC and LOC and for photos, drawings and sketches separately
@@ -64,7 +69,7 @@ if cfg.do.decoding_ROI
         labels = [1:48]; % set the labels for the decoding
         beta_dir = fullfile(path,'data','fmri','preproc','sub15_betas','fitted'); % path to the single subject betas in the individual subject space
         out_dir = fullfile(path,'data','fmri','decoding','single_sub',cfg.analysis,cond);  % path where results should be saved
-        roi_dir = fullfile(path,'data','fmri','preproc','masks'); % folder where ROI and searchlight masks are stored
+        roi_dir = fullfile(path,'data','fmri','preproc'); % folder where ROI and searchlight masks are stored
         cfg.design.function.name = 'make_design_cv'; % function to create the crossvalidation design
         cfg.results.output = {'accuracy_pairwise'}; % desired output of the decoding - here accuracy pairwise
         cfg.files.mask = {fullfile(roi_dir, 'evcmask.nii');fullfile(roi_dir, 'loc_mask.nii')}; % path to the ROI masks
@@ -81,7 +86,7 @@ if cfg.do.decoding_searchlight
     cfg.analysis = 'searchlight';
     cfg.noisenorm = 1; % specify if multivariate noise normalization should be applied
     cfg.hrf_fitting = 1; % specify if hrf fitting betas should be used for loading the residuals
-    cfg.parallel = 1; % specify if decoding should be parallelized
+    cfg.parallel = 0; % specify if decoding should be parallelized
     conds = {'Photo'; 'Drawing'; 'Sketch'};
     for this_cond_ind = 1:length(conds) % specifiy condition names "Photo/Drawing/Skech_[1-48]"
         condition_names = cell(1,48);
@@ -92,7 +97,7 @@ if cfg.do.decoding_searchlight
         labels = [1:48]; % set the labels for the decoding
         beta_dir = fullfile(path,'data','fmri','preproc','sub15_betas','normalized'); % path to the single subject betas in the MNI space
         out_dir = fullfile(path,'data','fmri','decoding','single_sub',cfg.analysis,cond); % path where results should be saved
-        roi_dir = fullfile(path,'data','fmri','preproc','masks'); % folder where ROI and searchlight masks are stored
+        roi_dir = fullfile(path,'data','fmri','preproc'); % folder where ROI and searchlight masks are stored
         cfg.design.function.name = 'make_design_cv'; % function to create the crossvalidation design
         cfg.results.output = {'accuracy_pairwise'}; % desired output of the decoding - here accuracy pairwise
         cfg.files.mask = {fullfile(roi_dir, 'searchlight_mask.nii')}; % path to the searchlight mask
@@ -124,7 +129,7 @@ if cfg.do.cross_decoding_ROI
             labels = [1:48 1:48]; % set the labels for the decoding
             beta_dir = fullfile(path,'data','fmri','preproc','sub15_betas','fitted'); % path to the single subject betas in the individual subject space
             out_dir = fullfile(path,'data','fmri','crossdecoding','single_sub',cfg.analysis,[this_cond,'_',that_cond]);  % path where results should be saved
-            roi_dir = fullfile(path,'data','fmri','preproc','masks'); % folder where ROI and searchlight masks are stored
+            roi_dir = fullfile(path,'data','fmri','preproc'); % folder where ROI and searchlight masks are stored
             cfg.results.output = {'accuracy_pairwise'}; % desired output of the decoding - here accuracy pairwise
             cfg.files.mask = {fullfile(roi_dir, 'evcmask.nii');fullfile(roi_dir, 'loc_mask.nii')}; % path to the ROI masks
             
@@ -157,7 +162,7 @@ if cfg.do.cross_decoding_searchlight
             labels = [1:48 1:48]; % set the labels for the decoding
             beta_dir = fullfile(path,'data','fmri','preproc','sub15_betas','normalized'); % path to the single subject betas in the individual subject space
             out_dir = fullfile(path,'data','fmri','crossdecoding','single_sub',cfg.analysis,[this_cond,'_',that_cond]);  % path where results should be saved
-            roi_dir = fullfile(path,'data','fmri','preproc','masks'); % folder where ROI and searchlight masks are stored
+            roi_dir = fullfile(path,'data','fmri','preproc'); % folder where ROI and searchlight masks are stored
             cfg.results.output = {'accuracy_pairwise'}; % desired output of the decoding - here accuracy pairwise
             cfg.files.mask = {fullfile(roi_dir, 'searchlight_mask.nii')}; % path to the searchlight mask
             
@@ -175,6 +180,9 @@ if cfg.do.RSA
     cfg.hrf_fitting = 1;
     cfg.noisenorm = 1; 
     conds = {'Photo'; 'Drawing'; 'Sketch'};
+    % a non-elegant hack to be able to use a different pattern_similarity_fast.m function than the one used in the TDT
+    % this is necessary since the original pattern_similarity_fast.m function creates faulty results 
+    cd(fullfile(pwd,'first_level','fmri'))
     for this_cond_ind = 1:length(conds)
         condition_names = cell(1,48);
         cond = conds{this_cond_ind};
@@ -184,8 +192,11 @@ if cfg.do.RSA
         labels = [1:48];
         beta_dir = fullfile(path,'data','fmri','preproc','sub15_betas','fitted'); % path to the single subject betas in the individual subject space
         out_dir = fullfile(path,'data','fmri','rsa','single_sub',cfg.analysis,cond);  % path where results should be saved
-        roi_dir = fullfile(path,'data','fmri','preproc','masks'); % folder where ROI and searchlight masks are stored
+        roi_dir = fullfile(path,'data','fmri','preproc'); % folder where ROI and searchlight masks are stored
         cfg.files.mask = {fullfile(roi_dir, 'evcmask.nii');fullfile(roi_dir, 'loc_mask.nii')}; % path to the ROI masks
-        decoding_similarity_pearson(condition_names,labels,beta_dir,out_dir,cfg);
+        rsa_fmri_pearson(condition_names,labels,beta_dir,out_dir,cfg);
     end
 end
+
+% cd back to the main directory 
+cd ../..

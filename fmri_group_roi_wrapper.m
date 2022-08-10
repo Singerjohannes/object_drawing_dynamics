@@ -52,7 +52,7 @@ all_se = cat(2, photo_se', drawing_se', sketch_se');
 % plot
 figure
 h = bar(all_accs-50, 'grouped','FaceColor', 'flat');
-h(1).CData = rgb('Black');
+h(1).CData = [0 0 0];
 h(2).CData = cmap(ceil(256),:);
 h(3).CData = cmap(ceil(200),:);
 xticklabels([roi_names])
@@ -165,7 +165,7 @@ all_se = cat(2, photo_se', drawing_se', sketch_se');
 % plot
 figure
 h = bar(all_accs-50, 'grouped','FaceColor', 'flat');
-h(1).CData = rgb('Black');
+h(1).CData = [0 0 0];
 h(2).CData = cmap(ceil(256),:);
 h(3).CData = cmap(ceil(200),:);
 xticklabels([roi_names])

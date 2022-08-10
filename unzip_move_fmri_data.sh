@@ -1,6 +1,6 @@
 #!/bin/bash
 # get user input with prompt to the path where the zipped fmri data lies 
-echo "Please enter the path where the zipped fmri data lies:"
+echo "Please enter the full path to the zipped fmri data file:"
 read -e -p "Path: " data_path
 echo "You entered: $data_path"
 
@@ -14,3 +14,7 @@ mkdir $github_path/data/fmri/
 # unzip the files in the given path 
 echo "Unzipping the files in the given path"
 unzip -q "$data_path" -d $github_path/data/fmri/
+echo "Unzipping the single subject fMRI data"
+cd $github_path/data/fmri/preproc/
+cat fmri_betas.tar.gz* > fmri_betas.tar.gz
+tar -xvf $github_path/data/fmri/preproc/fmri_betas.tar.gz

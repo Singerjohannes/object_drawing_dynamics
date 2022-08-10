@@ -1,4 +1,4 @@
-# object_drawing_dynamics
+# The spatiotemporal neural dynamics of object recognition for natural images and line drawings
 This repository containes code for the paper "The spatiotemporal neural dynamics of object recognition for natural images and line drawings". With the material contained in this repository all of the group level results and plots in the paper can be reproduced. All the first level results needed for the group level analyses are provided on OSF (Link: https://osf.io/vsc6y/). In addition, code for the first-level analyses is provided along with preprocessed data from sample subjects, which can also be retrieved from OSF. Link to preprint: 
 
 
@@ -15,7 +15,7 @@ To run the code in this repository you will need the following toolboxes on your
 
 All group-level results and the statistics in the paper can be reproduced with the code provided in this repository.  
 You first need to download and unzip the data from OSF (Link: https://osf.io/vsc6y/) to a folder in the cloned github directory.
-For this, download the zipped data from the MEG data and fMRI data components on OSF separatel. 
+For this, download the zipped data from the MEG data and fMRI data components on OSF separately. 
 Then run the scripts "unzip_move_fmri_data.sh" and "unzip_move_meg_data.sh" to unzip and move the data to the following folder structure: 
 
 data/  

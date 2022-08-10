@@ -16,7 +16,6 @@ figure_path = fullfile(path,'figures');
 if ~isdir(figure_path); mkdir(figure_path); end  
 
 % add utils 
-
 addpath(fullfile(path,'utils'));
 
 % add stats functions 
@@ -33,8 +32,13 @@ cmap = colormap('redblueTecplot');
 close all
 
 % setup fieldtrip for later matrix plotting 
-addpath(fullfile(path,'fieldtrip')); % change this to your fieldtrip path 
-ft_defaults;
+try 
+    ft_defaults;
+catch
+    ft_path = input('fieldtrip seems to be not on your path. Please enter the path to your fieldtrip version:\n','s');
+    addpath(ft_path);
+    ft_defaults;
+end
 
 % set stats defaults 
 nperm = 10000;
@@ -81,11 +85,11 @@ sketch_decoding_boot = bootstrap_fixed_1D(sketch_group_acc-50, [-100:10:1000],nb
 
 % bootstrap the difference for comparison of peak latencies 
 
-photo_drawing_decoding_bootdiff = bootstrap_fixed_1D_diff(photo_group_acc-50,drawing_group_acc-50, [-100:1:1000],nboot,statsInfo); 
+photo_drawing_decoding_bootdiff = bootstrap_fixed_1D_diff(photo_group_acc-50,drawing_group_acc-50, [-100:10:1000],nboot,statsInfo); 
 
-photo_sketch_decoding_bootdiff = bootstrap_fixed_1D_diff(photo_group_acc-50,sketch_group_acc-50, [-100:1:1000],nboot,statsInfo); 
+photo_sketch_decoding_bootdiff = bootstrap_fixed_1D_diff(photo_group_acc-50,sketch_group_acc-50, [-100:10:1000],nboot,statsInfo); 
 
-drawing_sketch_decoding_bootdiff = bootstrap_fixed_1D_diff(drawing_group_acc-50,sketch_group_acc-50, [-100:1:1000],nboot,statsInfo); 
+drawing_sketch_decoding_bootdiff = bootstrap_fixed_1D_diff(drawing_group_acc-50,sketch_group_acc-50, [-100:10:1000],nboot,statsInfo); 
 
 %% compute TOST for comparing peak latencies 
 
@@ -127,11 +131,11 @@ options.alpha      = 0.5;
 options.line_width = 3;
 this_line(1) = plot_areaerrorbar(photo_group_acc,options);
 hold on
-options.color_area = cmap(ceil(256),:);%rgb('DarkSeaGreen');
-options.color_line = cmap(ceil(256),:);%rgb('Green');
+options.color_area = cmap(ceil(256),:);
+options.color_line = cmap(ceil(256),:);
 this_line(2) = plot_areaerrorbar(drawing_group_acc,options);
-options.color_area = cmap(ceil(200),:);%rgb('Violet');    % Orange theme
-options.color_line = cmap(ceil(200),:)%rgb('Purple');
+options.color_area = cmap(ceil(200),:);
+options.color_line = cmap(ceil(200),:)
 this_line(3) = plot_areaerrorbar(sketch_group_acc,options);
 % plot stats 
 sig_decoding_photo(sig_decoding_photo==0)= NaN; 
@@ -216,11 +220,11 @@ options.alpha      = 0.5;
 options.line_width = 3;
 this_line(1) = plot_areaerrorbar(photo_minus_drawing,options);
 hold on
-options.color_area = cmap(ceil(256),:);%rgb('DarkSeaGreen');
-options.color_line = cmap(ceil(256),:);%rgb('Green');
+options.color_area = cmap(ceil(256),:);
+options.color_line = cmap(ceil(256),:);
 this_line(2) = plot_areaerrorbar(photo_minus_sketch,options);
-options.color_area = cmap(ceil(200),:);%rgb('Violet');    % Orange theme
-options.color_line = cmap(ceil(200),:)%rgb('Purple');
+options.color_area = cmap(ceil(200),:);
+options.color_line = cmap(ceil(200),:);
 this_line(3) = plot_areaerrorbar(drawing_minus_sketch,options);
 % plot stats 
 sig_photo_minus_drawing(sig_photo_minus_drawing==0)= NaN; 
@@ -330,11 +334,11 @@ options.alpha      = 0.5;
 options.line_width = 3;
 this_line(1) = plot_areaerrorbar(photo_drawing_group_acc,options);
 hold on
-options.color_area = cmap(ceil(256),:);%rgb('DarkSeaGreen');
-options.color_line = cmap(ceil(256),:);%rgb('Green');
+options.color_area = cmap(ceil(256),:);
+options.color_line = cmap(ceil(256),:);
 this_line(2) = plot_areaerrorbar(photo_sketch_group_acc,options);
-options.color_area = cmap(ceil(200),:);%rgb('Violet');    % Orange theme
-options.color_line = cmap(ceil(200),:)%rgb('Purple');
+options.color_area = cmap(ceil(200),:);
+options.color_line = cmap(ceil(200),:);
 this_line(3) = plot_areaerrorbar(drawing_sketch_group_acc,options);
 % plot stats 
 sig_crossdecoding_photo_drawing(sig_crossdecoding_photo_drawing==0)= NaN; 

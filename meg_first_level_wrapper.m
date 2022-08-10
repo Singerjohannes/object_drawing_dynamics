@@ -23,12 +23,23 @@ addpath(fullfile(path,'utils'));
 
 addpath(fullfile(path,'first_level','meg'));
 
-% add the decoding toolbox 
+% setup the decoding toolbox 
+try 
+    decoding_defaults;
+catch 
+    tdt_path = input('The Decoding Toolbox seems to be not on your path. Please enter the path to your TDT version:\n','s');
+    addpath(tdt_path);
+    decoding_defaults;
+end 
 
-addpath(fullfile(path,'tdt_3.999','decoding_toolbox'));
-
-%initialize decoding toolbox
-decoding_defaults; 
+% setup fieldtrip 
+try 
+    ft_defaults;
+catch
+    ft_path = input('fieldtrip seems to be not on your path. Please enter the path to your fieldtrip version:\n','s');
+    addpath(ft_path);
+    ft_defaults;
+end
 
 % set plot defaults 
 
@@ -60,7 +71,7 @@ cfg.do.RSA = 0; % computes representational dissimilarity matrices (RDMs) for a 
 
 if cfg.do.decoding 
 
-sub_id = 'od12a'; % sample data is provided for the subject "od12a" and can be retrieved from OSF (Link:)
+sub_id = 'od12a'; % sample data is provided for the subject "od12a" and can be retrieved from OSF
 
 %load data
 
@@ -139,7 +150,7 @@ end
 
 if cfg.do.temp_gen 
 
-sub_id = 'od12a'; % sample data is provided for the subject "od12a" and can be retrieved from OSF (Link:)
+sub_id = 'od12a'; % sample data is provided for the subject "od12a" and can be retrieved from OSF 
 
 %load data
 
@@ -192,7 +203,7 @@ end
 
 if cfg.do.RSA
 
-sub_id = 'od12a'; % sample data is provided for the subject "od12a" and can be retrieved from OSF (Link:)
+sub_id = 'od12a'; % sample data is provided for the subject "od12a" and can be retrieved from OSF 
 
 %load data
 
@@ -223,5 +234,3 @@ save(fullfile(path,'data','meg','rsa', [sub_id,'_pearson_noisenorm_RDMs.mat']), 
 
 
 end 
-
-toc; 
