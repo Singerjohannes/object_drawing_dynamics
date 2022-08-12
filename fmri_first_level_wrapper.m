@@ -30,8 +30,15 @@ catch
     decoding_defaults;
 end 
 
-%initialize decoding toolbox
-decoding_defaults;
+% setup spm 
+try 
+    spm;
+    close all
+catch
+    spm_path = input('SPM seems to be not on your path. Please enter the path to your SPM version:\n','s');
+    addpath(spm_path);
+end
+
 
 % set plot defaults
 

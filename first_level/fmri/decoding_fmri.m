@@ -69,7 +69,7 @@ elseif cfg.hrf_fitting
 end 
 end 
 
-cfg.verbose = 0; % you want all information to be printed on screen
+cfg.verbose = 2; % you want all information to be printed on screen
 
 %% Nothing needs to be changed below for a standard leave-one-run out cross
 %% validation analysis.
