@@ -3,9 +3,6 @@
 clear all
 clc
 
-clear all 
-clc
-
 %setup paths 
 
 path = pwd;
@@ -19,9 +16,14 @@ addpath(fullfile(path,'utils'));
 
 addpath(genpath(fullfile(path,'stats')));
 
-% add the decoding toolbox
-
-addpath(genpath((fullfile(path,'tdt_3.999','decoding_toolbox'))));
+% setup the decoding toolbox 
+try 
+    decoding_defaults;
+catch 
+    tdt_path = input('The Decoding Toolbox seems to be not on your path. Please enter the path to your TDT version:\n','s');
+    addpath(tdt_path);
+    decoding_defaults;
+end 
 
 % set plot defaults 
 

@@ -15,6 +15,15 @@ addpath(fullfile(path,'utils'));
 
 addpath(genpath(fullfile(path,'stats')));
 
+% setup spm for plotting 
+try 
+    spm;
+    close all
+catch
+    spm_path = input('SPM seems to be not on your path. Please enter the path to your SPM version:\n','s');
+    addpath(spm_path);
+end
+
 % set plot defaults 
 
 set(0, 'defaultaxesfontsize', 14, 'defaultaxesfontweight', 'bold', ...

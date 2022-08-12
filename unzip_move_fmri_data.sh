@@ -10,11 +10,11 @@ read -e -p "Path: " github_path
 echo "You entered: $github_path"
 # create a folder inside the cloned github directory and unzip the files to that folder
 echo "Creating a folder inside the cloned github directory and unzipping files to that folder"
-mkdir $github_path/data/fmri/
+mkdir -p $github_path/data/fmri/
 # unzip the files in the given path 
 echo "Unzipping the files in the given path"
 unzip -q "$data_path" -d $github_path/data/fmri/
 echo "Unzipping the single subject fMRI data"
 cd $github_path/data/fmri/preproc/
-cat fmri_betas.tar.gz* > fmri_betas.tar.gz
+cat split_fmri_betas.tar.gz* > fmri_betas.tar.gz
 tar -xvf $github_path/data/fmri/preproc/fmri_betas.tar.gz

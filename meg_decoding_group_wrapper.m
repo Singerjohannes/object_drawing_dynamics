@@ -125,7 +125,7 @@ options = [];
 options.handle = fig;
 options.x_axis = linspace(-0.1,1,111);
 options.error = 'sem';
-options.color_area = 'black';%[128 193 219]./255;    % Blue theme
+options.color_area = 'black';
 options.color_line = [17 17 17]./255;
 options.alpha      = 0.5;
 options.line_width = 3;
@@ -214,7 +214,7 @@ options = [];
 options.handle = fig;
 options.x_axis = linspace(-0.1,1,111);
 options.error = 'sem';
-options.color_area = 'black';%[128 193 219]./255;    % Blue theme
+options.color_area = 'black';
 options.color_line = [17 17 17]./255;
 options.alpha      = 0.5;
 options.line_width = 3;
@@ -328,7 +328,7 @@ fig = figure;
 options.handle = fig;
 options.x_axis = linspace(-.1,1,size(photo_drawing_group_acc,2));
 options.error = 'sem';
-options.color_area = 'black';%[128 193 219]./255;    % Blue theme
+options.color_area = 'black';
 options.color_line = [17 17 17]./255;
 options.alpha      = 0.5;
 options.line_width = 3;
@@ -395,7 +395,6 @@ subplot(1,3,1)
 ft_plot_matrix(flipud(mean(temp_gen_photo_group_acc,3)), 'clim', clim, 'highlight', flipud(1-sig_temp_gen_photo), 'highlightstyle', 'outline');
 xticks(linspace(1,111,12))
 xticklabels(linspace(-0.1,1,12))
-%xtickformat('%.1f')
 yticks(linspace(1,111,12))
 yticklabels(linspace(1,-0.1,12))
 ylabel('Train time (s)', 'FontSize', 20)
@@ -415,7 +414,6 @@ subplot(1,3,2)
 ft_plot_matrix(flipud(mean(temp_gen_drawing_group_acc,3)), 'clim', clim, 'highlight', flipud(1-sig_temp_gen_drawing), 'highlightstyle', 'outline');
 xticks(linspace(1,111,12))
 xticklabels(linspace(-0.1,1,12))
-%xtickformat('%.1f')
 yticks(linspace(1,111,12))
 yticklabels(linspace(1,-0.1,12))
 title('Drawing', 'FontSize',22)
@@ -430,7 +428,6 @@ subplot(1,3,3)
 ft_plot_matrix(flipud(mean(temp_gen_sketch_group_acc,3)), 'clim', clim, 'highlight', flipud(1-sig_temp_gen_sketch), 'highlightstyle', 'outline');
 xticks(linspace(1,111,12))
 xticklabels(linspace(-0.1,1,12))
-%xtickformat('%.1f')
 yticks(linspace(1,111,12))
 yticklabels(linspace(1,-0.1,12))
 title('Sketch', 'FontSize',22)
@@ -477,7 +474,6 @@ subplot(1,3,1)
 ft_plot_matrix(flipud(mean(temp_gen_photo_group_acc,3)-mean(temp_gen_drawing_group_acc,3)), 'clim', clim, 'highlight', flipud(1-sig_temp_gen_photo_minus_drawing), 'highlightstyle', 'outline');
 xticks(linspace(1,111,12))
 xticklabels(linspace(-0.1,1,12))
-%xtickformat('%.1f')
 yticks(linspace(1,111,12))
 yticklabels(linspace(1,-0.1,12))
 ylabel('Train time (s)', 'FontSize', 20)
@@ -497,7 +493,6 @@ subplot(1,3,2)
 ft_plot_matrix(flipud(mean(temp_gen_photo_group_acc,3)-mean(temp_gen_sketch_group_acc,3)), 'clim', clim, 'highlight', flipud(1-sig_temp_gen_photo_minus_sketch), 'highlightstyle', 'outline');
 xticks(linspace(1,111,12))
 xticklabels(linspace(-0.1,1,12))
-%xtickformat('%.1f')
 yticks(linspace(1,111,12))
 yticklabels(linspace(1,-0.1,12))
 title('Photo-Sketch','FontSize',22)
@@ -511,7 +506,6 @@ subplot(1,3,3)
 ft_plot_matrix(flipud(mean(temp_gen_drawing_group_acc,3)-mean(temp_gen_sketch_group_acc,3)), 'clim', clim, 'highlight', flipud(1-sig_temp_gen_drawing_minus_sketch), 'highlightstyle', 'outline');
 xticks(linspace(1,111,12))
 xticklabels(linspace(-0.1,1,12))
-%xtickformat('%.1f')
 yticks(linspace(1,111,12))
 yticklabels(linspace(1,-0.1,12))
 title('Drawing-Sketch','FontSize',22)

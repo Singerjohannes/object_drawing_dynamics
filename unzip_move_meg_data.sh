@@ -10,7 +10,7 @@ read -e -p "Path: " github_path
 echo "You entered: $github_path"
 # create a folder inside the cloned github directory and unzip the files to that folder
 echo "Creating a folder inside the cloned github directory and unzipping files to that folder"
-mkdir $github_path/data/meg/
+mkdir -p $github_path/data/meg/
 # unzip the files in the given path 
 echo "Unzipping the files in the given path"
 unzip -q "$data_path" -d $github_path/data/meg/

@@ -53,7 +53,7 @@ close all
 % specify decoding parameters 
 
 n_cat = 48;
-n_perm = 1; 
+n_perm = 5; 
 n_average = 2; 
 
 % specify subs to exclude 
@@ -62,10 +62,10 @@ excluded_subs = {};
 
 % specify which steps to compute 
 
-cfg.do.decoding = 1; % runs the category decoding for a single subject for photos, drawings and sketches separately - takes around 20min with 5 permutations
-cfg.do.cross_decoding = 0; % runs the category crossdecoding for a single subject for three comparisons: photo-drawing, drawing-sketch and photo-sketch separately 
-cfg.do.temp_gen = 0; % runs the temporal generalization analysis for a single subject for photos, drawings and sketches separately 
-cfg.do.RSA = 0; % computes representational dissimilarity matrices (RDMs) for a single subject for each time point and for photos, drawings and sketches separately 
+cfg.do.decoding = 1; % runs the category decoding for a single subject for photos, drawings and sketches separately 
+cfg.do.cross_decoding = 1; % runs the category crossdecoding for a single subject for three comparisons: photo-drawing, drawing-sketch and photo-sketch separately 
+cfg.do.temp_gen = 1; % runs the temporal generalization analysis for a single subject for photos, drawings and sketches separately 
+cfg.do.RSA = 1; % computes representational dissimilarity matrices (RDMs) for a single subject for each time point and for photos, drawings and sketches separately 
 
 %% Category Decoding
 
@@ -109,7 +109,7 @@ end
 
 if cfg.do.cross_decoding
 
-sub_id = 'od12a'; % sample data is provided for the subject "od12a" and can be retrieved from OSF (Link:)
+sub_id = 'od12a'; % sample data is provided for the subject "od12a" and can be retrieved from OSF 
 
 %load data
 
