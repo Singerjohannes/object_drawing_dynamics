@@ -150,6 +150,7 @@ xline(i,':');
 end
 xlim([-0.1 1])
 ylim([45 95])
+yticks([50:10:90])
 legend(this_line, 'Photos', 'Drawings', 'Sketches')
 title('Category Decoding - MEG')
 ylabel('Decoding Accuracy (%)')
@@ -361,7 +362,110 @@ xlabel('Time (s)')
 print(fullfile(figure_path, ['crossdecoding_group_level.svg']),...
              '-dsvg', '-r600')
 
+%% compute the difference between straight-decoding and cross-decoding and plot
 
+photo_minus_photo_drawing=  photo_group_acc-photo_drawing_group_acc;
+photo_minus_photo_sketch =  photo_group_acc-photo_sketch_group_acc;
+drawing_minus_photo_drawing =  drawing_group_acc-photo_drawing_group_acc;
+drawing_minus_drawing_sketch =  drawing_group_acc-drawing_sketch_group_acc;
+sketch_minus_drawing_sketch =  sketch_group_acc-drawing_sketch_group_acc;
+sketch_minus_photo_sketch =  sketch_group_acc-photo_sketch_group_acc;
+
+%% compute stats on differences
+
+% set rng to a fixed number 
+rng(96);
+
+% set to two-tailed test
+tail = 'both';
+
+[~,~,~,~,photo_minus_photo_drawing_clusters,photo_minus_photo_drawing_clustersize,photo_minus_photo_drawing_cluster_th] = permutation_cluster_1sample_weight_alld (photo_minus_photo_drawing, nperm, cluster_th, significance_th, tail);
+
+[~,~,~,~,photo_minus_photo_sketch_clusters,photo_minus_photo_sketch_clustersize,photo_minus_photo_sketch_cluster_th] = permutation_cluster_1sample_weight_alld (photo_minus_photo_sketch, nperm, cluster_th, significance_th, tail);
+
+[~,~,~,~,drawing_minus_photo_drawing_clusters,drawing_minus_photo_drawing_clustersize,drawing_minus_photo_drawing_cluster_th] = permutation_cluster_1sample_weight_alld (drawing_minus_photo_drawing, nperm, cluster_th, significance_th, tail);
+
+[~,~,~,~,drawing_minus_drawing_sketch_clusters,drawing_minus_drawing_sketch_clustersize,drawing_minus_drawing_sketch_cluster_th] = permutation_cluster_1sample_weight_alld (drawing_minus_drawing_sketch, nperm, cluster_th, significance_th, tail);
+
+[~,~,~,~,sketch_minus_drawing_sketch_clusters,sketch_minus_drawing_sketch_clustersize,sketch_minus_drawing_sketch_cluster_th] = permutation_cluster_1sample_weight_alld (sketch_minus_drawing_sketch, nperm, cluster_th, significance_th, tail);
+
+[~,~,~,~,sketch_minus_photo_sketch_clusters,sketch_minus_photo_sketch_clustersize,sketch_minus_photo_sketch_cluster_th]  = permutation_cluster_1sample_weight_alld (sketch_minus_photo_sketch, nperm, cluster_th, significance_th, tail);
+
+%get maximum threshold for correcting for multiple comparisons
+max_thr = max([photo_minus_photo_drawing_cluster_th, photo_minus_photo_sketch_cluster_th, drawing_minus_photo_drawing_cluster_th,drawing_minus_drawing_sketch_cluster_th,sketch_minus_drawing_sketch_cluster_th,sketch_minus_photo_sketch_cluster_th]); 
+
+% intialize significance arrays 
+sig_photo_minus_photo_drawing = zeros(1,size(photo_minus_photo_drawing,2));
+sig_photo_minus_photo_sketch = zeros(1,size(photo_minus_photo_sketch,2));
+sig_drawing_minus_photo_drawing = zeros(1,size(drawing_minus_photo_drawing,2));
+sig_drawing_minus_drawing_sketch = zeros(1,size(drawing_minus_drawing_sketch,2));
+sig_sketch_minus_drawing_sketch = zeros(1,size(sketch_minus_drawing_sketch,2));
+sig_sketch_minus_photo_sketch = zeros(1,size(sketch_minus_photo_sketch,2));
+
+%now threshold the clusters again based on the maximum threshold 
+sig_photo_minus_photo_drawing([photo_minus_photo_drawing_clusters{photo_minus_photo_drawing_clustersize>max_thr}]) = 1;
+sig_photo_minus_photo_sketch([photo_minus_photo_sketch_clusters{photo_minus_photo_sketch_clustersize>max_thr}]) = 1;
+sig_drawing_minus_photo_drawing([drawing_minus_photo_drawing_clusters{drawing_minus_photo_drawing_clustersize>max_thr}]) = 1;
+sig_drawing_minus_drawing_sketch([drawing_minus_drawing_sketch_clusters{drawing_minus_drawing_sketch_clustersize>max_thr}]) = 1;
+sig_sketch_minus_drawing_sketch([sketch_minus_drawing_sketch_clusters{sketch_minus_drawing_sketch_clustersize>max_thr}]) = 1;
+sig_sketch_minus_photo_sketch([sketch_minus_photo_sketch_clusters{sketch_minus_photo_sketch_clustersize>max_thr}]) = 1;
+
+
+%% plot straight-decoding vs. cross-decoding differences 
+
+fig = figure;
+options = [];
+options.handle = fig;
+options.x_axis = linspace(-0.1,1,111);
+options.error = 'sem';
+options.color_area = 'black';
+options.color_line = [17 17 17]./255;
+options.alpha      = 0.5;
+options.line_width = 3;
+this_line(1) = plot_areaerrorbar(photo_minus_photo_drawing,options);
+hold on
+options.color_area = cmap(ceil(256),:);
+options.color_line = cmap(ceil(256),:);
+this_line(2) = plot_areaerrorbar(photo_minus_photo_sketch,options);
+options.color_area = cmap(ceil(200),:);
+options.color_line = cmap(ceil(200),:);
+this_line(3) = plot_areaerrorbar(drawing_minus_photo_drawing,options);
+options.color_area = cmap(ceil(170),:);
+options.color_line = cmap(ceil(170),:);
+this_line(4) = plot_areaerrorbar(drawing_minus_drawing_sketch,options);
+options.color_area = cmap(ceil(50),:);
+options.color_line = cmap(ceil(50),:);
+this_line(5) = plot_areaerrorbar(sketch_minus_photo_sketch,options);
+options.color_area = cmap(ceil(1),:);
+options.color_line = cmap(ceil(1),:);
+this_line(6) = plot_areaerrorbar(sketch_minus_drawing_sketch,options);
+% plot stats 
+sig_photo_minus_photo_drawing(sig_photo_minus_photo_drawing==0)= NaN; 
+plot(options.x_axis,sig_photo_minus_photo_drawing*-0.4, 'black');
+sig_photo_minus_photo_sketch(sig_photo_minus_photo_sketch==0)= NaN; 
+plot(options.x_axis,sig_photo_minus_photo_sketch*-0.6, 'color',cmap(ceil(256),:));
+sig_drawing_minus_photo_drawing(sig_drawing_minus_photo_drawing==0)= NaN; 
+plot(options.x_axis,sig_drawing_minus_photo_drawing*-0.8, 'color',cmap(ceil(200),:));
+sig_drawing_minus_drawing_sketch(sig_drawing_minus_drawing_sketch==0)= NaN; 
+plot(options.x_axis,sig_drawing_minus_drawing_sketch*-1, 'color',cmap(ceil(170),:));
+sig_sketch_minus_drawing_sketch(sig_sketch_minus_drawing_sketch==0)= NaN; 
+plot(options.x_axis,sig_sketch_minus_drawing_sketch*-1.2, 'color',cmap(ceil(50),:));
+sig_sketch_minus_photo_sketch(sig_sketch_minus_photo_sketch==0)= NaN; 
+plot(options.x_axis,sig_sketch_minus_photo_sketch*-1.4, 'color',cmap(ceil(1),:));
+yline(0,':')
+for i= 0:0.1:1
+xline(i,':');
+end
+xlim([-0.1 1])
+ylim([-2 30])
+legend(this_line, 'Photo minus Photo-Drawing', 'Photo minus Photo-Sketch', 'Drawing minus Photo-Drawing', 'Drawing minus Drawing-Sketch', 'Sketch minus Photo-Sketch','Sketch minus Drawing-Sketch')
+ylabel({'Decoding Accuracy', 'Difference (%)'})
+xlabel('Time (s)')
+
+print(fullfile(figure_path, ['straight_vs_cross_decoding_differences.svg']), ...
+              '-dsvg', '-r600')
+          
+          
 %% load temporal generalization results
 
 data_dir = fullfile(path,'data/meg/temporal_generalization/');
@@ -518,3 +622,5 @@ axis square
 
 print(fullfile(figure_path, ['group_temp_gen_diff.svg']), ...
              '-dsvg', '-r600')
+
+

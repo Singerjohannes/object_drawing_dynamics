@@ -51,11 +51,11 @@ close all
 
 % specify which steps to compute
 
-cfg.do.decoding_ROI = 1; % runs the category decoding for a single subject for photos, drawings and sketches separately in 2 ROIs: EVC and LOC
-cfg.do.decoding_searchlight = 1; % runs the category decoding for a single subject for photos, drawings and sketches separately across the whole brain
+cfg.do.decoding_ROI = 0; % runs the category decoding for a single subject for photos, drawings and sketches separately in 2 ROIs: EVC and LOC
+cfg.do.decoding_searchlight = 0; % runs the category decoding for a single subject for photos, drawings and sketches separately across the whole brain
 cfg.do.cross_decoding_ROI = 0; % runs the category crossdecoding for a single subject for three comparisons: photo-drawing, drawing-sketch and photo-sketch separately in 2 ROIs: EVC and LOC
 cfg.do.cross_decoding_searchlight = 0; % runs the category crossdecoding for a single subject for three comparisons: photo-drawing, drawing-sketch and photo-sketch separately across the whole brain
-cfg.do.RSA = 1; % computes representational dissimilarity matrices (RDMs) for a single subject for two ROIs: EVC and LOC and for photos, drawings and sketches separately
+cfg.do.RSA =1; % computes representational dissimilarity matrices (RDMs) for a single subject for two ROIs: EVC and LOC and for photos, drawings and sketches separately
 
 
 %% category decoding - ROI
@@ -74,12 +74,12 @@ if cfg.do.decoding_ROI
             condition_names(i) = {[cond, '_', num2str(i)]};
         end
         labels = [1:48]; % set the labels for the decoding
-        beta_dir = fullfile(path,'data','fmri','preproc','fitted'); % path to the single subject betas in the individual subject space
+        beta_dir = fullfile(path,'data','fmri','preproc','sub15_betas','fitted'); % path to the single subject betas in the individual subject space
         out_dir = fullfile(path,'data','fmri','decoding','single_sub',cfg.analysis,cond);  % path where results should be saved
         roi_dir = fullfile(path,'data','fmri','preproc'); % folder where ROI and searchlight masks are stored
         cfg.design.function.name = 'make_design_cv'; % function to create the crossvalidation design
         cfg.results.output = {'accuracy_pairwise'}; % desired output of the decoding - here accuracy pairwise
-        cfg.files.mask = {fullfile(roi_dir, 'evcmask.nii');fullfile(roi_dir, 'loc_mask.nii')}; % path to the ROI masks
+        cfg.files.mask = {fullfile(roi_dir, 'evcmask.nii');fullfile(roi_dir, 'loc_mask.nii');fullfile(roi_dir, 'pIPS_mask.nii')}; % path to the ROI masks
         
         decoding_fmri(condition_names,labels,beta_dir,out_dir,cfg);
     end
@@ -102,7 +102,7 @@ if cfg.do.decoding_searchlight
             condition_names(i) = {[cond, '_', num2str(i)]};
         end
         labels = [1:48]; % set the labels for the decoding
-        beta_dir = fullfile(path,'data','fmri','preproc','normalized'); % path to the single subject betas in the MNI space
+        beta_dir = fullfile(path,'data','fmri','preproc','sub15_betas','normalized'); % path to the single subject betas in the MNI space
         out_dir = fullfile(path,'data','fmri','decoding','single_sub',cfg.analysis,cond); % path where results should be saved
         roi_dir = fullfile(path,'data','fmri','preproc'); % folder where ROI and searchlight masks are stored
         cfg.design.function.name = 'make_design_cv'; % function to create the crossvalidation design
@@ -134,11 +134,11 @@ if cfg.do.cross_decoding_ROI
                 condition_names(i) = {[that_cond, '_', num2str(i-48)]};
             end
             labels = [1:48 1:48]; % set the labels for the decoding
-            beta_dir = fullfile(path,'data','fmri','preproc','fitted'); % path to the single subject betas in the individual subject space
+            beta_dir = fullfile(path,'data','fmri','preproc','sub15_betas','fitted'); % path to the single subject betas in the individual subject space
             out_dir = fullfile(path,'data','fmri','crossdecoding','single_sub',cfg.analysis,[this_cond,'_',that_cond]);  % path where results should be saved
             roi_dir = fullfile(path,'data','fmri','preproc'); % folder where ROI and searchlight masks are stored
             cfg.results.output = {'accuracy_pairwise'}; % desired output of the decoding - here accuracy pairwise
-            cfg.files.mask = {fullfile(roi_dir, 'evcmask.nii');fullfile(roi_dir, 'loc_mask.nii')}; % path to the ROI masks
+            cfg.files.mask = {fullfile(roi_dir, 'evcmask.nii');fullfile(roi_dir, 'loc_mask.nii');fullfile(roi_dir, 'pIPS_mask.nii')}; % path to the ROI masks
             
             crossdecoding_fmri(condition_names,labels,beta_dir,out_dir,cfg);
         end
@@ -153,7 +153,7 @@ if cfg.do.cross_decoding_searchlight
     cfg.analysis = 'searchlight';
     cfg.noisenorm = 1; % specify if multivariate noise normalization should be applied
     cfg.hrf_fitting = 1; % specify if hrf fitting betas should be used for loading the residuals
-    cfg.parallel = 1; % specify if decoding should be parallelized
+    cfg.parallel = 0; % specify if decoding should be parallelized
     conds = {'Photo'; 'Drawing'; 'Sketch'};
     for this_cond_ind = 1:length(conds)-1 % specify condition names for training and testing e.g. "Photo_[1-48]” and "Drawing_[1-48]"
         for that_cond_ind = this_cond_ind+1:length(conds)
@@ -197,10 +197,10 @@ if cfg.do.RSA
             condition_names(i) = {[cond, '_', num2str(i)]};
         end
         labels = [1:48];
-        beta_dir = fullfile(path,'data','fmri','preproc','fitted'); % path to the single subject betas in the individual subject space
+        beta_dir = fullfile(path,'data','fmri','preproc','sub15_betas','fitted'); % path to the single subject betas in the individual subject space
         out_dir = fullfile(path,'data','fmri','rsa','single_sub',cfg.analysis,cond);  % path where results should be saved
         roi_dir = fullfile(path,'data','fmri','preproc'); % folder where ROI and searchlight masks are stored
-        cfg.files.mask = {fullfile(roi_dir, 'evcmask.nii');fullfile(roi_dir, 'loc_mask.nii')}; % path to the ROI masks
+        cfg.files.mask = {fullfile(roi_dir, 'evcmask.nii');fullfile(roi_dir, 'loc_mask.nii');fullfile(roi_dir, 'pIPS_mask.nii')}; % path to the ROI masks
         rsa_fmri_pearson(condition_names,labels,beta_dir,out_dir,cfg);
     end
     
