@@ -1,5 +1,5 @@
 # The spatiotemporal neural dynamics of object recognition for natural images and line drawings
-This repository containes code for the paper "The spatiotemporal neural dynamics of object recognition for natural images and line drawings". With the material contained in this repository all of the group level results and plots in the paper can be reproduced. All the first level results needed for the group level analyses are provided on OSF (Link: https://osf.io/vsc6y/). In addition, code for the first-level analyses is provided along with preprocessed data from sample subjects, which can also be retrieved from OSF. Link to preprint: https://biorxiv.org/cgi/content/short/2022.08.12.503484v1 
+This repository containes code for the paper "The spatiotemporal neural dynamics of object recognition for natural images and line drawings". With the material contained in this repository all of the group level results and plots in the paper can be reproduced. All the first level results needed for the group level analyses are provided on OSF (Link: https://osf.io/vsc6y/). In addition, code for the first-level analyses is provided along with preprocessed data from sample subjects, which can also be retrieved from OSF. Link to paper: (https://www.jneurosci.org/content/43/3/484)
 
 
 ## Requirements: 
